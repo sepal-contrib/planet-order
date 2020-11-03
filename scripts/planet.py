@@ -4,6 +4,7 @@ import requests
 import os
 from requests.auth import HTTPBasicAuth
 import time
+from pandas import json_normalize
 
 def paginate(session, url):
     page_url = url
@@ -33,16 +34,16 @@ def get_quads(url, payload, session):
 
     return quads
 
-def download_quads(quads, mosaic, session):
+def download_quads(quads, mosaic, session, output):
     
-    mosaic_path = os.getcwd() + '/' + mosaic
+    mosaic_path = os.path.join(os.path.expanduser('~'), 'downloads', mosaic)
     if not os.path.exists(mosaic_path):
         os.mkdir(mosaic_path)
 
     for quad in quads:
         location = quad["_links"]["download"]
         quad_id = quad["id"]
-        quad_file = mosaic_path + '/' + quad_id + ".tif"
+        quad_file = os.path.join(mosaic_path, f"{quad_id}.tif")
 
         if not os.path.isfile(quad_file):
             worked = False
@@ -66,7 +67,10 @@ def download_quads(quads, mosaic, session):
                     continue
         else:
             output.add_msg(f'{mosaic} quad ID {quad_id} exists.')
-
+    
+    output.add_msg(f"The result are now available in the following folder : {mosaic_path}/", "success")
+    
+    return
 
 def get_error(code, **kwargs):
 
@@ -74,7 +78,7 @@ def get_error(code, **kwargs):
         "e1": "There seem to be an error with your API access, please check your API key.",
         "e2": "Error finding your mosaics, try checking that you used the correct mosaic name.",
         "e3": "There was an error with your geometry, please check the GeoJSON file.",
-        "e4": f"Error {kwargs["quads"].status_code}: {kwargs["quads"].reason}, {kwargs["quads"].text.split("<p>")[1][:-5]} \nProcess terminated"
+        "e4": f"Error {kwargs['quads'].status_code}: {kwargs['quads'].reason}, {kwargs['quads'].text.split('<p>')[1][:-5]} \nProcess terminated"
     }
 
     return error_codes[code]
@@ -115,23 +119,16 @@ def run_download(planet_api_key, basemaps_url, aoi_io, output):
         mosaic_id = mosaics_df.loc[mosaics_df["name"] == mosaic_name]["id"].values
         mosaic_url = basemaps_url + mosaic_id[0]
 
-        # Parsing bounding box
-        try:
-            geom = getbbox(geojson_geometry)
-        except Exception as e:
-            output.add_msg(get_error("e3"), 'error')
-            return
-
         # Getting the quads
         quads_url = mosaic_url + '/quads'
-        payload = {"_page_size": 1000, 'bbox': ', '.join(po_aoi_io.get_bounds())}
+        payload = {"_page_size": 1000, 'bbox': ', '.join(str(x) for x in aoi_io.get_bounds(aoi_io.assetId))}
 
         quads = get_quads(quads_url, payload, session)
 
         if isinstance(quads, list):
             output.add_msg(f"***Preparing the download of {len(quads)} quads for mosaic {mosaic_name}***")
-            download_quads(quads, mosaic_name, session)
-        else
+            download_quads(quads, mosaic_name, session, output)
+        else:
             output.add_msg(get_error("e4", quads=quads), 'error')
             
     return
@@ -139,11 +136,12 @@ def run_download(planet_api_key, basemaps_url, aoi_io, output):
             
 def get_sum_up(po_aoi_io):
     
-    bb = po_aoi_io.get_bounds()
-    sg_bb = sg.box(bb)
+    min_lon, min_lat, max_lon, max_lat = po_aoi_io.get_bounds(po_aoi_io.assetId)
+    sg_bb = sg.box(min_lon, min_lat, max_lon, max_lat)
     
-    gdf = gdp.GeoDataframe(crs="EPSG:4326", geometry = [sg_bb]).to_crs('ESRI:54009')
-    surface = gdf.area
+    gdf = gpd.GeoDataFrame(crs="EPSG:4326", geometry = [sg_bb]).to_crs('ESRI:54009')
+    minx, miny, maxx, maxy = gdf.total_bounds
+    surface = (maxx-minx)*(maxy-miny)/10e6 #in km2
     
     msg = f"You're about to launch a downloading on a surface of {surface} Km\u00B2"
     
