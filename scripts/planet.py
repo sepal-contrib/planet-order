@@ -70,7 +70,7 @@ def download_quads(quads, mosaic, session, output):
     
     output.add_msg(f"The result are now available in the following folder : {mosaic_path}/", "success")
     
-    return
+    return mosaic_path
 
 def get_error(code, **kwargs):
 
@@ -83,7 +83,7 @@ def get_error(code, **kwargs):
 
     return error_codes[code]
 
-def run_download(planet_api_key, basemaps_url, aoi_io, output):
+def get_orders(planet_api_key, basemaps_url, aoi_io, output):
     
     #authenticate to planet
     command = [
@@ -106,12 +106,40 @@ def run_download(planet_api_key, basemaps_url, aoi_io, output):
         return
         
     
-    output.reset()
-    for order in range(len(orders)):
-        output.append_msg(orders[order]["name"])
+    output.add_live_msg('Orders list updated', 'success')
+    
+    #construct a order dic with onlyt the name and the index
+    return {order['name']: i for i, order in enumerate(orders)}
+    
+    
+    
+
+def run_download(planet_api_key, basemaps_url, aoi_io, order_index, output):
+    
+    mosaic_path = None
+    
+    #authenticate to planet
+    command = [
+        'curl', '-L', '-H',
+        f"Authorization: api-key {planet_api_key}",
+        basemaps_url
+    ]
+    os.system(' '.join(command))
+    
+    session = requests.Session()
+    session.auth = HTTPBasicAuth(planet_api_key, '')
+    response = session.get(basemaps_url, params={'_page_size': 1000})
+
+    output.add_msg(str(response))
+    
+    # Getting mosaics metadata
+    orders = response.json()["mosaics"]
+    if len(orders) == 0:
+        output.add_msg(get_error("e1"), 'error')
+        return
     
     #maybe insert number as a variable in the interface    
-    mosaic_name = orders[0]["name"]
+    mosaic_name = orders[order_index]["name"]
     
     mosaics_df = json_normalize(orders)
 
@@ -126,12 +154,12 @@ def run_download(planet_api_key, basemaps_url, aoi_io, output):
         quads = get_quads(quads_url, payload, session)
 
         if isinstance(quads, list):
-            output.add_msg(f"***Preparing the download of {len(quads)} quads for mosaic {mosaic_name}***")
-            download_quads(quads, mosaic_name, session, output)
+            output.add_msg(f"Preparing the download of {len(quads)} quads for mosaic {mosaic_name}")
+            mosaic_path = download_quads(quads, mosaic_name, session, output)
         else:
             output.add_msg(get_error("e4", quads=quads), 'error')
             
-    return
+    return mosaic_path
             
             
 def get_sum_up(po_aoi_io):
