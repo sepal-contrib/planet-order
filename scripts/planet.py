@@ -83,7 +83,7 @@ def get_error(code, **kwargs):
 
     return error_codes[code]
 
-def get_orders(planet_api_key, basemaps_url, aoi_io, output):
+def get_orders(planet_api_key, basemaps_url, output):
     
     #authenticate to planet
     command = [
@@ -149,7 +149,7 @@ def run_download(planet_api_key, basemaps_url, aoi_io, order_index, output):
 
         # Getting the quads
         quads_url = mosaic_url + '/quads'
-        payload = {"_page_size": 1000, 'bbox': ', '.join(str(x) for x in aoi_io.get_bounds(aoi_io.assetId))}
+        payload = {"_page_size": 1000, 'bbox': ', '.join(str(x) for x in aoi_io.get_bounds(aoi_io.get_aoi_ee()))}
 
         quads = get_quads(quads_url, payload, session)
 
@@ -162,9 +162,9 @@ def run_download(planet_api_key, basemaps_url, aoi_io, order_index, output):
     return mosaic_path
             
             
-def get_sum_up(po_aoi_io):
+def get_sum_up(aoi_io):
     
-    min_lon, min_lat, max_lon, max_lat = po_aoi_io.get_bounds(po_aoi_io.assetId)
+    min_lon, min_lat, max_lon, max_lat = aoi_io.get_bounds(aoi_io.get_aoi_ee())
     sg_bb = sg.box(min_lon, min_lat, max_lon, max_lat)
     
     gdf = gpd.GeoDataFrame(crs="EPSG:4326", geometry = [sg_bb]).to_crs('ESRI:54009')
