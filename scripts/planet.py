@@ -202,12 +202,12 @@ def run_download(planet_api_key, basemaps_url, aoi_io, order_index, output):
 
         quads = get_quads(quads_url, payload, session)
 
-        #if isinstance(quads, list):
-        #    output.add_msg(f"Preparing the download of {len(quads)} quads for mosaic {mosaic_name}")
-        #    mosaic_path = download_quads(quads, mosaic_name, session, output)
-        #    
-        #else:
-        #    output.add_msg(get_error("e4", quads=quads), 'error')
+        if isinstance(quads, list):
+            output.add_msg(f"Preparing the download of {len(quads)} quads for mosaic {mosaic_name}")
+            mosaic_path = download_quads(quads, mosaic_name, session, output)
+            
+        else:
+            output.add_msg(get_error("e4", quads=quads), 'error')
     
     mosaic_path = os.path.join(os.path.expanduser('~'), 'downloads', mosaic_name)
     
@@ -221,10 +221,15 @@ def create_zip(mosaic_path):
     
     # create the zipfile 
     zip_file = mosaic_path.joinpath(f'{mosaic_path.name}.zip')
-    with ZipFile(zip_file, 'w') as myzip:
+    
+    # destroy it if the archive already exist
+    if zip_file.is_file():
+        zip_file.unlink()
         
+    # write all the files 
+    with ZipFile(zip_file, 'w') as myzip:
         for file in mosaic_path.glob('*.tif'):
-            myzip.write(file)
+            myzip.write(file, file.name)
             
     return zip_file
     
