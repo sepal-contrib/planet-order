@@ -9,6 +9,7 @@ from pathlib import Path
 import geemap
 import ipyvuetify as v
 import json
+from zipfile import ZipFile
 
 def paginate(session, url):
     page_url = url
@@ -204,12 +205,29 @@ def run_download(planet_api_key, basemaps_url, aoi_io, order_index, output):
         #if isinstance(quads, list):
         #    output.add_msg(f"Preparing the download of {len(quads)} quads for mosaic {mosaic_name}")
         #    mosaic_path = download_quads(quads, mosaic_name, session, output)
+        #    
         #else:
         #    output.add_msg(get_error("e4", quads=quads), 'error')
+    
+    mosaic_path = os.path.join(os.path.expanduser('~'), 'downloads', mosaic_name)
+    
+    return create_zip(mosaic_path)
+            
+def create_zip(mosaic_path):
+    """Create a zipfile from the images in the repository"""
+    
+    # convert to pathlib path
+    mosaic_path = Path(mosaic_path)
+    
+    # create the zipfile 
+    zip_file = mosaic_path.joinpath(f'{mosaic_path.name}.zip')
+    with ZipFile(zip_file, 'w') as myzip:
         
-    return json_normalize(quads)#mosaic_pathjson_normalize(quads)
+        for file in mosaic_path.glob('*.tif'):
+            myzip.write(file)
             
-            
+    return zip_file
+    
 def get_sum_up(aoi_io):
     
     min_lon, min_lat, max_lon, max_lat = aoi_io.get_bounds(aoi_io.get_aoi_ee())
@@ -222,28 +240,3 @@ def get_sum_up(aoi_io):
     msg = f"You're about to launch a downloading on a surface of {surface} Km\u00B2"
     
     return msg
-
-# This is some crap that might be useful at some point...
-
-# API request object
-#search_request = {
-#  #"interval": "day",
-#  #"id": [mosaic_id],
-#  #"item_types": ["PSScene4Band"],
-#  "bbox":[ -51.416015625, -8.390865416667355, -50.987548828125, -7.966757602932168 ],
-#  "coordinate_system": "EPSG:3857",
-#  "first_acquired": "2018-12-01T00:00:00.000Z",
-#  "last_acquired": "2019-06-01T00:00:00.000Z",
-#  "name": "basemap_test",
-#  "product_type": "basemap"
-# #"filter": combined_filter
-#}
-
-# fire off the POST request
-#search_result = \
-#  requests.post(
-#    'https://api.planet.com/basemaps/v1/mosaics',
-#    auth=HTTPBasicAuth(PLANET_API_KEY, ''),
-#    json=search_request)
-#
-#print(json.dumps(search_result.json(), indent=1))
