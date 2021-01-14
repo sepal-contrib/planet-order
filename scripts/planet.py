@@ -5,6 +5,10 @@ import os
 from requests.auth import HTTPBasicAuth
 import time
 from pandas import json_normalize
+from pathlib import Path
+import geemap
+import ipyvuetify as v
+import json
 
 def paginate(session, url):
     page_url = url
@@ -85,7 +89,7 @@ def get_error(code, **kwargs):
 
 def get_orders(planet_api_key, basemaps_url, output):
     
-    #authenticate to planet
+    # authenticate to planet
     command = [
         'curl', '-L', '-H',
         f"Authorization: api-key {planet_api_key}",
@@ -108,12 +112,56 @@ def get_orders(planet_api_key, basemaps_url, output):
     
     output.add_live_msg('Orders list updated', 'success')
     
-    #construct a order dic with onlyt the name and the index
+    # construct a order dict with only the name and the index
     return {order['name']: i for i, order in enumerate(orders)}
-    
-    
-    
 
+def get_grid(planet_api_key, basemaps_url, aoi_io, m, output):
+    
+    #authenticate to planet
+    command = [
+        'curl', '-L', '-H',
+        f"Authorization: api-key {planet_api_key}",
+        basemaps_url
+    ]
+    os.system(' '.join(command))
+    
+    session = requests.Session()
+    session.auth = HTTPBasicAuth(planet_api_key, '')
+    response = session.get(basemaps_url, params={'_page_size': 1000})
+
+    output.add_msg(str(response))
+    
+    # Getting mosaics metadata
+    orders = response.json()["mosaics"]
+    if len(orders) == 0:
+        output.add_msg(get_error("e1"), 'error')
+        return
+    
+    # select the first order
+    mosaic_df = json_normalize(orders)
+    mosaic_url = basemaps_url + mosaic_df.iloc[0].id
+
+    # Getting the quads
+    quads_url = mosaic_url + '/quads'
+    payload = {"_page_size": 1000, 'bbox': ', '.join(str(x) for x in aoi_io.get_bounds(aoi_io.get_aoi_ee()))}
+    quads = get_quads(quads_url, payload, session)
+    
+    df = json_normalize(quads)
+    geometry = [sg.box(*row.bbox) for i, row in df.iterrows()]
+    gdf = gpd.GeoDataFrame(df.filter(['id']), geometry=geometry, crs="EPSG:4326")
+    
+    grid_path = Path('~', 'downloads', f'{aoi_io.get_aoi_name()}_planet_grid.shp').expanduser()
+    gdf.to_file(grid_path)
+    
+    # display on map 
+    json_df = json.loads(gdf.to_json())
+    ee_df = geemap.geojson_to_ee(json_df)
+    
+    m.addLayer(ee_df, {'color': v.theme.themes.dark.accent}, 'grid')
+    m.zoom_ee_object(ee_df.geometry())
+    
+    return grid_path
+    
 def run_download(planet_api_key, basemaps_url, aoi_io, order_index, output):
     
     mosaic_path = None
@@ -138,7 +186,7 @@ def run_download(planet_api_key, basemaps_url, aoi_io, order_index, output):
         output.add_msg(get_error("e1"), 'error')
         return
     
-    #maybe insert number as a variable in the interface    
+    # maybe insert number as a variable in the interface    
     mosaic_name = orders[order_index]["name"]
     
     mosaics_df = json_normalize(orders)
@@ -153,13 +201,13 @@ def run_download(planet_api_key, basemaps_url, aoi_io, order_index, output):
 
         quads = get_quads(quads_url, payload, session)
 
-        if isinstance(quads, list):
-            output.add_msg(f"Preparing the download of {len(quads)} quads for mosaic {mosaic_name}")
-            mosaic_path = download_quads(quads, mosaic_name, session, output)
-        else:
-            output.add_msg(get_error("e4", quads=quads), 'error')
-            
-    return mosaic_path
+        #if isinstance(quads, list):
+        #    output.add_msg(f"Preparing the download of {len(quads)} quads for mosaic {mosaic_name}")
+        #    mosaic_path = download_quads(quads, mosaic_name, session, output)
+        #else:
+        #    output.add_msg(get_error("e4", quads=quads), 'error')
+        
+    return json_normalize(quads)#mosaic_pathjson_normalize(quads)
             
             
 def get_sum_up(aoi_io):
