@@ -11,6 +11,8 @@ import ipyvuetify as v
 import json
 from zipfile import ZipFile
 
+from . import parameter as pm
+
 def paginate(session, url):
     page_url = url
     page = session.get(page_url).json()
@@ -39,32 +41,30 @@ def get_quads(url, payload, session):
 
     return quads
 
-def download_quads(quads, mosaic, session, output):
+def download_quads(quads, mosaic, session, aoi_name, output):
     
-    mosaic_path = os.path.join(os.path.expanduser('~'), 'downloads', mosaic)
-    if not os.path.exists(mosaic_path):
-        os.mkdir(mosaic_path)
+    mosaic_path = pm.get_result_dir(aoi_name).joinpath(mosaic)
+    mosaic_path.mkdir(exist_ok=True)
 
     for quad in quads:
         location = quad["_links"]["download"]
         quad_id = quad["id"]
-        quad_file = os.path.join(mosaic_path, f"{quad_id}.tif")
+        quad_file = mosaic_path.joinpath(f'{quad_id}.tif')
 
-        if not os.path.isfile(quad_file):
+        if not quad_file.is_file():
             worked = False
             while not worked:
                 try:
                     download = session.get(location)
-                    worked = True
-
-                    f = open(quad_file, "wb")
-                    output.add_msg(f'Downloading mosaic quad {quad_file}')
-                    for chunk in download.iter_content(chunk_size=512 * 1024):
-                        # filter out keep-alive new chunks
-                        if chunk:
-                            f.write(chunk)
-                    f.close()
+                    with quad_file.open('wb') as f:
+                        output.add_msg(f'Downloading mosaic quad {quad_file}')
+                        for chunk in download.iter_content(chunk_size=512 * 1024):
+                            # filter out keep-alive new chunks
+                            if chunk:
+                                f.write(chunk)
                     output.add_msg(f'{mosaic} quad ID {quad_id} saved.')
+                    
+                    worked = True
                 except:
                     output.add_msg('Connection refused by the server..', 'warning')
                     time.sleep(5)
@@ -151,7 +151,7 @@ def get_grid(planet_api_key, basemaps_url, aoi_io, m, output):
     geometry = [sg.box(*row.bbox) for i, row in df.iterrows()]
     gdf = gpd.GeoDataFrame(df.filter(['id']), geometry=geometry, crs="EPSG:4326")
     
-    grid_path = Path('~', 'downloads', f'{aoi_io.get_aoi_name()}_planet_grid.shp').expanduser()
+    grid_path = pm.get_result_dir(aoi_io.get_aoi_name()).joinpath(f'planet_grid.shp')
     gdf.to_file(grid_path)
     
     # display on map 
@@ -160,6 +160,8 @@ def get_grid(planet_api_key, basemaps_url, aoi_io, m, output):
     
     m.addLayer(ee_df, {'color': v.theme.themes.dark.accent}, 'grid')
     m.zoom_ee_object(ee_df.geometry())
+    
+    output.add_live_msg(f'The grid have been created and is available at {grid_path}', 'success')
     
     return grid_path
     
@@ -204,14 +206,12 @@ def run_download(planet_api_key, basemaps_url, aoi_io, order_index, output):
 
         if isinstance(quads, list):
             output.add_msg(f"Preparing the download of {len(quads)} quads for mosaic {mosaic_name}")
-            mosaic_path = download_quads(quads, mosaic_name, session, output)
+            mosaic_path = download_quads(quads, mosaic_name, session, aoi_io.get_aoi_name(), output)
             
         else:
             output.add_msg(get_error("e4", quads=quads), 'error')
     
-    mosaic_path = os.path.join(os.path.expanduser('~'), 'downloads', mosaic_name)
-    
-    return create_zip(mosaic_path)
+    return mosaic_path
     
 def get_sum_up(aoi_io):
     
