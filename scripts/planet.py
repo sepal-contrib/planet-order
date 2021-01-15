@@ -212,26 +212,6 @@ def run_download(planet_api_key, basemaps_url, aoi_io, order_index, output):
     mosaic_path = os.path.join(os.path.expanduser('~'), 'downloads', mosaic_name)
     
     return create_zip(mosaic_path)
-            
-def create_zip(mosaic_path):
-    """Create a zipfile from the images in the repository"""
-    
-    # convert to pathlib path
-    mosaic_path = Path(mosaic_path)
-    
-    # create the zipfile 
-    zip_file = mosaic_path.joinpath(f'{mosaic_path.name}.zip')
-    
-    # destroy it if the archive already exist
-    if zip_file.is_file():
-        zip_file.unlink()
-        
-    # write all the files 
-    with ZipFile(zip_file, 'w') as myzip:
-        for file in mosaic_path.glob('*.tif'):
-            myzip.write(file, file.name)
-            
-    return zip_file
     
 def get_sum_up(aoi_io):
     
