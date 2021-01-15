@@ -1,15 +1,16 @@
-import geopandas as gpd
-from shapely import geometry as sg
-import requests
-import os
-from requests.auth import HTTPBasicAuth
-import time
-from pandas import json_normalize
 from pathlib import Path
-import geemap
-import ipyvuetify as v
 import json
 from zipfile import ZipFile
+import requests
+from requests.auth import HTTPBasicAuth
+import os
+import time
+
+import geopandas as gpd
+from shapely import geometry as sg
+from pandas import json_normalize
+import geemap
+import ipyvuetify as v
 
 from . import parameter as pm
 
@@ -110,33 +111,12 @@ def get_orders(planet_api_key, basemaps_url, output):
         output.add_msg(get_error("e1"), 'error')
         return
         
-    
-    output.add_live_msg('Orders list updated', 'success')
-    
-    # construct a order dict with only the name and the index
-    return {order['name']: i for i, order in enumerate(orders)}
+    return orders, session
 
 def get_grid(planet_api_key, basemaps_url, aoi_io, m, output):
     
-    #authenticate to planet
-    command = [
-        'curl', '-L', '-H',
-        f"Authorization: api-key {planet_api_key}",
-        basemaps_url
-    ]
-    os.system(' '.join(command))
-    
-    session = requests.Session()
-    session.auth = HTTPBasicAuth(planet_api_key, '')
-    response = session.get(basemaps_url, params={'_page_size': 1000})
-
-    output.add_msg(str(response))
-    
-    # Getting mosaics metadata
-    orders = response.json()["mosaics"]
-    if len(orders) == 0:
-        output.add_msg(get_error("e1"), 'error')
-        return
+    # get the orders 
+    orders, session = get_orders(planet_api_key, basemaps_url, output)
     
     # select the first order
     mosaic_df = json_normalize(orders)
@@ -167,27 +147,7 @@ def get_grid(planet_api_key, basemaps_url, aoi_io, m, output):
     
 def run_download(planet_api_key, basemaps_url, aoi_io, order_index, output):
     
-    mosaic_path = None
-    
-    #authenticate to planet
-    command = [
-        'curl', '-L', '-H',
-        f"Authorization: api-key {planet_api_key}",
-        basemaps_url
-    ]
-    os.system(' '.join(command))
-    
-    session = requests.Session()
-    session.auth = HTTPBasicAuth(planet_api_key, '')
-    response = session.get(basemaps_url, params={'_page_size': 1000})
-
-    output.add_msg(str(response))
-    
-    # Getting mosaics metadata
-    orders = response.json()["mosaics"]
-    if len(orders) == 0:
-        output.add_msg(get_error("e1"), 'error')
-        return
+    orders, session = get_orders(planet_api_key, basemaps_url, output)
     
     # maybe insert number as a variable in the interface    
     mosaic_name = orders[order_index]["name"]
