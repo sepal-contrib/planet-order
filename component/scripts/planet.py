@@ -16,7 +16,7 @@ import ee
 
 ee.Initialize()
 
-from . import parameter as pm
+from component import parameter as cp
 
 def paginate(session, url):
     return session.get(url).json()
@@ -45,7 +45,7 @@ def get_quads(url, payload, session):
 
 def download_quads(quads, mosaic, session, aoi_name, output):
     
-    mosaic_path = pm.get_result_dir(aoi_name).joinpath(mosaic)
+    mosaic_path = cp.get_result_dir(aoi_name).joinpath(mosaic)
     mosaic_path.mkdir(exist_ok=True)
 
     for quad in quads:
@@ -119,7 +119,7 @@ def get_grid(quads, aoi_io, m, output):
     geometry = [sg.box(*row.bbox) for i, row in df.iterrows()]
     gdf = gpd.GeoDataFrame(df.filter(['id']), geometry=geometry, crs="EPSG:4326")
     
-    grid_path = pm.get_result_dir(aoi_io.get_aoi_name()).joinpath(f'{aoi_io.get_aoi_name()}_planet_grid.shp')
+    grid_path = cp.get_result_dir(aoi_io.get_aoi_name()).joinpath(f'{aoi_io.get_aoi_name()}_planet_grid.shp')
     gdf.to_file(grid_path)
     
     # display on map 
@@ -175,7 +175,7 @@ def get_sum_up(aoi_io):
     minx, miny, maxx, maxy = gdf.total_bounds
     surface = (maxx-minx)*(maxy-miny)/10e6 #in km2
     
-    msg = f"You're about to launch a downloading on a surface of {surface} Km\u00B2"
+    msg = f"You're about to launch a downloading on a surface of {surface:.2f} Km\u00B2"
     
     return msg
 
@@ -222,7 +222,7 @@ def get_theorical_grid(aoi_io, m, output):
     grid = grid.to_crs('EPSG:4326')
             
     # save the file
-    grid_path = pm.get_result_dir(aoi_io.get_aoi_name()).joinpath(f'{aoi_io.get_aoi_name()}_grid.shp')
+    grid_path = cp.get_result_dir(aoi_io.get_aoi_name()).joinpath(f'{aoi_io.get_aoi_name()}_grid.shp')
     grid.to_file(grid_path)
             
     # display on map 

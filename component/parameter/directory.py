@@ -11,7 +11,6 @@ def get_default_result_dir():
 def get_result_dir(aoi_name):
     
     result_dir = get_default_result_dir().joinpath(aoi_name)
-    
     result_dir.mkdir(exist_ok=True)
     
     return result_dir
