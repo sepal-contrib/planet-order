@@ -156,7 +156,8 @@ def run_download(planet_api_key, basemaps_url, aoi_io, order_io, m, output):
 
         if isinstance(quads, list):
             
-            grid_path = get_grid(quads, aoi_io, m, output)
+            grid_path = None
+            #grid_path = get_grid(quads, aoi_io, m, output)
             
             output.add_msg(f"Preparing the download of {len(quads)} quads for mosaic {mosaic_name}")
             mosaic_path = download_quads(quads, mosaic_name, session, aoi_io.get_aoi_name(), output)
