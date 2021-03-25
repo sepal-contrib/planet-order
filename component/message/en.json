@@ -19,5 +19,10 @@
             "label": "API key",
             "error_msg": "You cannot expose the default API key"
         }
+    },
+    "dynamic_select": {
+        "prev": "prev",
+        "next": "next",
+        "label": "Select mosaic"
     }
 }
