@@ -1,7 +1,7 @@
 from pathlib import Path
 
 # module directory 
-module_dir = Path('~', 'modules_results').expanduser()
+module_dir = Path('~', 'module_results').expanduser()
 module_dir.mkdir(exist_ok=True)
 
 # result_dir

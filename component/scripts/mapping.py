@@ -35,7 +35,7 @@ def set_grid(aoi_io, m, out):
     
     # chec the grid filename 
     aoi_name = aoi_io.get_aoi_name()
-    grid_file = cp.get_aoi_dir(aoi_name).joinpath(f'{aoi_name}_grid.shp')
+    grid_file = cp.get_aoi_dir(aoi_name).joinpath(f'{aoi_name}_grid.geojson')
     
     # read the grid if possible
     if grid_file.is_file():
@@ -85,14 +85,16 @@ def set_grid(aoi_io, m, out):
         grid_json = json.loads(grid_json)
         grid_json['features'] = features
 
-        grid_gdf = gpd.GeoDataFrame.from_features(grid_json, crs="EPSG:4326") \
-            .intersection(aoi_shp)
+        grid_gdf = gpd.GeoDataFrame.from_features(grid_json, crs="EPSG:4326")
+
+        # filter by cliping 
+        grid_gdf.geometry = grid_gdf.intersection(aoi_shp)
     
         # filter empty geometries
         grid_gdf = grid_gdf[np.invert(grid_gdf.is_empty)]
     
         # save the grid
-        grid_gdf.to_file(grid_file)
+        grid_gdf.to_file(grid_file, driver='GeoJSON')
     
     # convert the grid to ee for dispay
     json_df = json.loads(grid_gdf.to_json())
@@ -101,7 +103,7 @@ def set_grid(aoi_io, m, out):
     # display the grid on the map
     m.addLayer(grid_ee, {'color': v.theme.themes.dark.accent}, f'{aoi_name} grid')
     
-    return
+    return grid_gdf
     
     
     

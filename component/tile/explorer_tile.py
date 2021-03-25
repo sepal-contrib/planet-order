@@ -45,6 +45,7 @@ class ExplorerTile(sw.Tile):
         # add js behaviour
         self.check_key.on_event('click', self._get_mosaic)
         self.select.observe(self._on_mosaic_select, 'v_model')
+        self.down_quads.on_event('click', self._download)
         
     def _get_mosaic(self, widget, event, data):
         """recover all the available mosaic with this specific key"""
@@ -101,6 +102,22 @@ class ExplorerTile(sw.Tile):
         ds.select.disabled = False
         
         return self
+    
+    def _download(self, widget, event, data):
+        """download the selected quads using the selected mosaic"""
+        
+        widget.toggle_loading()
+        
+        #try:
+        cs.download_quads(self.aoi_io.get_aoi_name(), self.select.v_model, self.grid, self.api_alert)
+        
+        #except Exception as e:
+        #    self.api_alert.add_msg(str(e), 'error')
+            
+        widget.toggle_loading()
+        
+        return self
+            
     
     
         

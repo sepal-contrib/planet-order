@@ -6,6 +6,7 @@ from planet import api
 from ipyleaflet import TileLayer
 
 from component.message import cm
+from component import parameter as cp
 
 planet = SimpleNamespace()
 
@@ -61,10 +62,10 @@ def order_basemaps(key, out):
     out.add_msg(cm.planet.load_mosaics)
     
     # autheticate to planet
-    client = api.ClientV1(api_key=planet.key)
+    planet.client = api.ClientV1(api_key=planet.key)
     
     # get the basemap names 
-    mosaics = [m['name'] for m in client.get_mosaics().get()['mosaics']]
+    mosaics = [m['name'] for m in planet.client.get_mosaics().get()['mosaics']]
     
     out.add_msg(cm.planet.mosaic_loaded, 'success')
     
@@ -90,6 +91,41 @@ def display_basemap(mosaic_name, m, out):
     m.add_layer(layer)
     
     return
+
+def download_quads(aoi_name, mosaic_name, grid, out):
+    """export each quad to the appropriate folder"""
+    
+    out.add_msg(cm.planet.export)
+    
+    # get the mosaic from the mosaic name 
+    mosaics = planet.client.get_mosaics().get()['mosaics'] 
+    mosaic_names = [m['name'] for m in mosaics]
+    mosaic = mosaics[mosaic_names.index(mosaic_name)]
+    
+    # construct the quad list 
+    quads = []
+    for i, row in grid.iterrows():
+        quads.append(f'{row.x:04d}-{row.y:04d}')
+        
+    
+    for quad_id in quads:
+        
+        # check file existence 
+        res_dir = cp.get_mosaic_dir(aoi_name, mosaic_name)
+        file = res_dir.joinpath(f'{quad_id}.tif')
+        
+        if file.is_file():
+            out.add_msg(cm.planet.file_exist.format(file))
+            continue
+            
+        out.add_msg(cm.planet.down_file.format(file))
+        quad = planet.client.get_quad_by_id(mosaic, quad_id).get()
+        planet.client.download_quad(quad).get_body().write(file)
+        
+    out.add_msg(cm.planet.down_end.format(res_dir), "success")
+    
+    return
+    
     
     
     
