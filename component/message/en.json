@@ -31,5 +31,11 @@
         "valid_key": "Your key have been validated",
         "load_mosaics": "We are retrieving the mosaics list",
         "mosaic_loaded": "The list of mosaic is available in the Mosaic selector"
+    },
+    "map": {
+        "aoi": "loading aoi",
+        "grid": "generating planet grid",
+        "tiles": "loading tiles",
+        "done": "loading complete"
     }
 }
