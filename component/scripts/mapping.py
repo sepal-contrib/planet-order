@@ -39,7 +39,7 @@ def set_grid(aoi_io, m, out):
     
     # read the grid if possible
     if grid_file.is_file():
-        grid_gdf = gdp.read_file(grid_file)
+        grid_gdf = gpd.read_file(grid_file)
     
     # generate the grid
     else:

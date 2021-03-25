@@ -88,11 +88,9 @@ class ExplorerTile(sw.Tile):
             
             # unsure that this operation is only carried out once
             self.mapped = True
-        
-        # get the quads from the grid 
-        
-        
-        # display them on the map 
+            
+        # display the mosaic on the map 
+        cs.display_basemap(self.select.v_model, self.m, self.m.state)
         
         # finish the state 
         self.m.state.add_msg(cm.map.done, done=True)

@@ -3,6 +3,7 @@ import requests
 from types import SimpleNamespace
 
 from planet import api
+from ipyleaflet import TileLayer
 
 from component.message import cm
 
@@ -10,6 +11,8 @@ planet = SimpleNamespace()
 
 # parameters
 planet.url = 'https://api.planet.com/auth/v1/experimental/public/my/subscriptions'
+planet.basemaps = "https://tiles{{s}}.planet.com/basemaps/v1/planet-tiles/{mosaic_name}/gmap/{{z}}/{{x}}/{{y}}.png?api_key={key}"
+planet.attribution = "Planet"
 
 # attributes
 
@@ -66,6 +69,32 @@ def order_basemaps(key, out):
     out.add_msg(cm.planet.mosaic_loaded, 'success')
     
     return mosaics
+
+def display_basemap(mosaic_name, m, out):
+    """display the planet mosaic basemap on the map"""
+    
+    out.add_msg(cm.map.tiles)
+    
+    # remove the existing layers with planet attribution 
+    for layer in m.layers:
+        if layer.attribution == planet.attribution: 
+            m.remove_layer(layer)
+            
+    # create a new Tile layer on the map 
+    layer = TileLayer(
+        url=planet.url.format(key=planet.key, mosaic_name=mosaic_name),
+        name=mosaic_name,
+        attribution=planet.attribution,
+        show_loading = True
+    )
+    m.add_layer(layer)
+    
+    return
+    
+    
+    
+    
+    
 
 
     
