@@ -13,5 +13,11 @@
         "btn":  "Download mosaic",
         "txt": "This tile will download the orders selected on the step 1 AOI to your Sepal folder",
         "select": "Select order"
+    },
+    "key": {
+        "password": {
+            "label": "API key",
+            "error_msg": "You cannot expose the default API key"
+        }
     }
 }
