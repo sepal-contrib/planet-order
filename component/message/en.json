@@ -24,5 +24,12 @@
         "prev": "prev",
         "next": "next",
         "label": "Select mosaic"
+    },
+    "planet": {
+        "invalid_key": "The current key is invalid, please provide a valid Planet key",
+        "test_key": "We are currently checking your API key",
+        "valid_key": "Your key have been validated",
+        "load_mosaics": "We are retrieving the mosaics list",
+        "mosaic_loaded": "The list of mosaic is available in the Mosaic selector"
     }
 }

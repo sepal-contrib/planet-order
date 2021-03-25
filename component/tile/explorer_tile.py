@@ -4,6 +4,7 @@ from sepal_ui import sepalwidgets as sw
 from sepal_ui import mapping as sm
 
 from component import widget as cw
+from component import scripts as cs
 
 class ExplorerTile(sw.Tile):
     
@@ -37,3 +38,23 @@ class ExplorerTile(sw.Tile):
         )
         
         # add js behaviour
+        self.check_key.on_event('click', self._get_mosaic)
+        
+    def _get_mosaic(self, widget, event, data):
+        """recover all the available mosaic with this specific key"""
+        
+        widget.toggle_loading()
+        
+        #try: 
+        items = cs.order_basemaps(self.api_key.v_model, self.api_alert)
+        self.select.set_items(items)
+            
+        #except Exception as e:
+        #    self.api_alert.add_msg(str(e), 'error')
+            
+        widget.toggle_loading()
+        
+        return self
+    
+        
+        
