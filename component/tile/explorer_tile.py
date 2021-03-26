@@ -80,15 +80,16 @@ class ExplorerTile(sw.Tile):
             
         # update the map 
         if not self.mapped:
-            
-            # add the aoi and center the map on it
-            cs.display_on_map(self.m, self.aoi_io, self.m.state)
-            
-            # add the grid 
-            self.grid = cs.set_grid(self.aoi_io, self.m, self.m.state)
+            self.m.zoom_ee_object(self.aoi_io.get_aoi_ee().geometry())
             
             # unsure that this operation is only carried out once
             self.mapped = True
+            
+        # add the aoi and center the map on it
+        cs.display_on_map(self.m, self.aoi_io, self.m.state)
+            
+        # add the grid 
+        self.grid = cs.set_grid(self.aoi_io, self.m, self.m.state)
             
         # display the mosaic on the map 
         cs.display_basemap(self.select.v_model, self.m, self.m.state)

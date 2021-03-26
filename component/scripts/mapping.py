@@ -24,7 +24,6 @@ def display_on_map(m, aoi_io, out):
     empty = ee.Image().byte()
     outline = empty.paint(**{'featureCollection': aoi, 'color': 1, 'width': 3})
     m.addLayer(outline, {'palette': v.theme.themes.dark.secondary}, 'AOI borders')
-    m.zoom_ee_object(aoi.geometry())
     
     return 
 
