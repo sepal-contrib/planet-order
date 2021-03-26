@@ -111,7 +111,7 @@ def download_quads(aoi_name, mosaic_name, grid, out):
     # construct the quad list 
     quads = []
     for i, row in grid.iterrows():
-        quads.append(f'{row.x:04d}-{row.y:04d}')
+        quads.append(f'{int(row.x):04d}-{int(row.y):04d}')
         
     
     for quad_id in quads:
