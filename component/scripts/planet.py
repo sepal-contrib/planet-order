@@ -13,7 +13,7 @@ planet = SimpleNamespace()
 # parameters
 planet.url = 'https://api.planet.com/auth/v1/experimental/public/my/subscriptions'
 planet.basemaps = "https://tiles.planet.com/basemaps/v1/planet-tiles/{mosaic_name}/gmap/{{z}}/{{x}}/{{y}}.png?api_key={key}"
-planet.attribution = "Planet"
+planet.attribution = "Imagery © Planet Labs Inc."
 
 # attributes
 
@@ -95,7 +95,6 @@ def display_basemap(mosaic_name, m, out):
     tmp_layers = list(m.layers)
     tmp_layers.insert(1, layer)
     m.layers = tuple(tmp_layers)
-    #m.add_layer(layer)
     
     return
 
