@@ -23,7 +23,7 @@ def display_on_map(m, aoi_io, out):
     aoi = aoi_io.get_aoi_ee()
     empty = ee.Image().byte()
     outline = empty.paint(**{'featureCollection': aoi, 'color': 1, 'width': 3})
-    m.addLayer(outline, {'palette': v.theme.themes.dark.secondary}, f'aoi {aoi_io.get_aoi_name()} border')
+    m.addLayer(outline, {'palette': v.theme.themes.dark.secondary}, 'AOI borders')
     m.zoom_ee_object(aoi.geometry())
     
     return 
@@ -99,7 +99,7 @@ def set_grid(aoi_io, m, out):
     grid_ee = geemap.geojson_to_ee(json_df)
     
     # display the grid on the map
-    m.addLayer(grid_ee, {'color': v.theme.themes.dark.accent}, f'{aoi_name} grid')
+    m.addLayer(grid_ee, {'color': v.theme.themes.dark.accent}, 'AOI Planet© Grid')
     
     return grid_gdf
     

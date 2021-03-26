@@ -12,7 +12,7 @@ planet = SimpleNamespace()
 
 # parameters
 planet.url = 'https://api.planet.com/auth/v1/experimental/public/my/subscriptions'
-planet.basemaps = "https://tiles{{s}}.planet.com/basemaps/v1/planet-tiles/{mosaic_name}/gmap/{{z}}/{{x}}/{{y}}.png?api_key={key}"
+planet.basemaps = "https://tiles.planet.com/basemaps/v1/planet-tiles/{mosaic_name}/gmap/{{z}}/{{x}}/{{y}}.png?api_key={key}"
 planet.attribution = "Planet"
 
 # attributes
@@ -83,12 +83,19 @@ def display_basemap(mosaic_name, m, out):
             
     # create a new Tile layer on the map 
     layer = TileLayer(
-        url=planet.url.format(key=planet.key, mosaic_name=mosaic_name),
-        name=mosaic_name,
+        url=planet.basemaps.format(key=planet.key, mosaic_name=mosaic_name),
+        name="Planet© Mosaic",
         attribution=planet.attribution,
         show_loading = True
     )
-    m.add_layer(layer)
+    
+    # insert the mosaic bewteen CardoDB and the country border ie position 1
+    # we have already removed the planet layers so I'm sure that nothing is in 
+    # The grid and the country are build before and if we are here I'm also sure that there are 3 layers in the map
+    tmp_layers = list(m.layers)
+    tmp_layers.insert(1, layer)
+    m.layers = tuple(tmp_layers)
+    #m.add_layer(layer)
     
     return
 
