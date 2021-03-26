@@ -16,15 +16,14 @@ ee.Initialize()
 from component.message import cm
 
 def display_on_map(m, aoi_io, out):
-    """display the asset on the map"""
+    """display the aoi on the map"""
     
     out.add_msg(cm.map.aoi)
     
     aoi = aoi_io.get_aoi_ee()
     empty = ee.Image().byte()
     outline = empty.paint(**{'featureCollection': aoi, 'color': 1, 'width': 3})
-    m.addLayer(outline, {'palette': v.theme.themes.dark.secondary}, f'aoi {aoi_io.get_aoi_name()} border')
-    m.zoom_ee_object(aoi.geometry())
+    m.addLayer(outline, {'palette': v.theme.themes.dark.secondary}, 'AOI borders')
     
     return 
 
@@ -99,7 +98,9 @@ def set_grid(aoi_io, m, out):
     grid_ee = geemap.geojson_to_ee(json_df)
     
     # display the grid on the map
-    m.addLayer(grid_ee, {'color': v.theme.themes.dark.accent}, f'{aoi_name} grid')
+    empty = ee.Image().byte()
+    outline = empty.paint(featureCollection = grid_ee, color = 1, width = 3)
+    m.addLayer(outline, {'palette': v.theme.themes.dark.accent}, 'AOI Planet© Grid', False)
     
     return grid_gdf
     
