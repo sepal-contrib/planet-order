@@ -9,7 +9,7 @@ class CustomPassword(sw.PasswordField):
         
         self.default_key = cp.default_planet_key
         
-        super().__init__(label=cm.key.password.label, v_model=self.default_key)
+        super().__init__(label=cm.key.password.label, v_model=self.default_key, class_ = 'mb-2')
         
         self.observe(self._check_default, 'v_model')
         
