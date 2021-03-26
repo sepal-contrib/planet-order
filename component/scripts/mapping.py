@@ -100,7 +100,7 @@ def set_grid(aoi_io, m, out):
     # display the grid on the map
     empty = ee.Image().byte()
     outline = empty.paint(featureCollection = grid_ee, color = 1, width = 3)
-    m.addLayer(outline, {'palette': v.theme.themes.dark.accent}, 'AOI Planet© Grid')
+    m.addLayer(outline, {'palette': v.theme.themes.dark.accent}, 'AOI Planet© Grid', False)
     
     return grid_gdf
     
