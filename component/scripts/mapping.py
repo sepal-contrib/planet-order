@@ -55,37 +55,35 @@ def set_grid(aoi_io, m, out):
         # create a dataframe that only use the grid cells that are intersecting the bb of the aoi_gdf
         with cp.planet_grid.open() as f:
     
-            grid_json = ""
             features = []
+        
+            # jump over the first line
+            next(f)
         
             # read each line of the file
             for line in f:
+        
+                # split the line 
+                tmp = line.strip().split(sep=', ')
+        
+                # create a box object
+                bb = sg.box(*json.loads(tmp[3]))
+        
+                # build a feature if it intersects the aoi
+                if bb.intersects(aoi_bb):
+                    feat = {
+                        'type': 'Feature', 
+                        'properties': {
+                            'name': tmp[0], 
+                            'x': tmp[1], 
+                            'y': tmp[2]
+                        }, 
+                        'geometry': bb.__geo_interface__
+                    }
             
-                # keep the line that are not feature as they are
-                if not line.startswith('{"type":'):
-                    grid_json += line.strip()
-                
-                # keep only the features that intersect
-                else:
-                    tmp = line.strip()
-                
-                    #  remove the last commas (if existing)
-                    if tmp.endswith(","):
-                        tmp = tmp[:-1]
-                
-                    # create a polygon from the feature
-                    feat = json.loads(tmp)
-                    poly = sg.Polygon(feat["geometry"]["coordinates"][0][0])
-                
-                    # check for intersection
-                    if aoi_bb.intersects(poly):
-                        features.append(feat)
-    
-        # gather the grid element in real dataframe
-        grid_json = json.loads(grid_json)
-        grid_json['features'] = features
+                    features.append(feat)
 
-        grid_gdf = gpd.GeoDataFrame.from_features(grid_json, crs="EPSG:4326")
+        grid_gdf = gpd.GeoDataFrame.from_features(features, crs='EPSG:4326')
 
         # filter by cliping 
         grid_gdf.geometry = grid_gdf.intersection(aoi_shp)
@@ -96,7 +94,7 @@ def set_grid(aoi_io, m, out):
         # save the grid
         grid_gdf.to_file(grid_file, driver='GeoJSON')
     
-    # convert the grid to ee for dispay
+    # convert the grid to ee for display
     json_df = json.loads(grid_gdf.to_json())
     grid_ee = geemap.geojson_to_ee(json_df)
     
