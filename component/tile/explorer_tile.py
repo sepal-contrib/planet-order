@@ -46,6 +46,21 @@ class ExplorerTile(sw.Tile):
         self.check_key.on_event('click', self._get_mosaic)
         self.select.observe(self._on_mosaic_select, 'v_model')
         self.down_quads.on_event('click', self._download)
+        self.m.observe(self._on_combo_change, 'combo')
+        
+    def _on_combo_change(self, change):
+        """update the mosaic if the planet key is available"""
+        
+        if not (self.select.v_model and cs.planet.valid):
+            return self
+        
+        cs.display_basemap(self.select.v_model, self.m, self.m.state, self.m.combo)
+        
+        # finish the state 
+        self.m.state.add_msg(cm.map.done, done=True)
+        
+        return self
+            
         
     def _get_mosaic(self, widget, event, data):
         """recover all the available mosaic with this specific key"""
@@ -92,7 +107,7 @@ class ExplorerTile(sw.Tile):
         self.grid = cs.set_grid(self.aoi_io, self.m, self.m.state)
             
         # display the mosaic on the map 
-        cs.display_basemap(self.select.v_model, self.m, self.m.state)
+        cs.display_basemap(self.select.v_model, self.m, self.m.state, self.m.combo)
         
         # finish the state 
         self.m.state.add_msg(cm.map.done, done=True)
@@ -109,11 +124,11 @@ class ExplorerTile(sw.Tile):
         
         widget.toggle_loading()
         
-        #try:
-        cs.download_quads(self.aoi_io.get_aoi_name(), self.select.v_model, self.grid, self.api_alert)
+        try:
+            cs.download_quads(self.aoi_io.get_aoi_name(), self.select.v_model, self.grid, self.api_alert)
         
-        #except Exception as e:
-        #    self.api_alert.add_msg(str(e), 'error')
+        except Exception as e:
+            self.api_alert.add_msg(str(e), 'error')
             
         widget.toggle_loading()
         

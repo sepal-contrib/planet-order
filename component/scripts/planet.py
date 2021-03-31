@@ -1,4 +1,5 @@
 # this file will be used as a singleton object in the explorer tile 
+
 import requests
 from types import SimpleNamespace
 
@@ -12,7 +13,7 @@ planet = SimpleNamespace()
 
 # parameters
 planet.url = 'https://api.planet.com/auth/v1/experimental/public/my/subscriptions'
-planet.basemaps = "https://tiles.planet.com/basemaps/v1/planet-tiles/{mosaic_name}/gmap/{{z}}/{{x}}/{{y}}.png?api_key={key}"
+planet.basemaps = "https://tiles.planet.com/basemaps/v1/planet-tiles/{mosaic_name}/gmap/{{z}}/{{x}}/{{y}}.png?api_key={key}&proc={color}"
 planet.attribution = "Imagery © Planet Labs Inc."
 
 # attributes
@@ -71,10 +72,14 @@ def order_basemaps(key, out):
     
     return mosaics
 
-def display_basemap(mosaic_name, m, out):
+def display_basemap(mosaic_name, m, out, color=None):
     """display the planet mosaic basemap on the map"""
     
     out.add_msg(cm.map.tiles)
+    
+    # set the color if necessary 
+    if not color:
+        color = cp.planet_colors[0]
     
     # remove the existing layers with planet attribution 
     for layer in m.layers:
@@ -83,7 +88,7 @@ def display_basemap(mosaic_name, m, out):
             
     # create a new Tile layer on the map 
     layer = TileLayer(
-        url=planet.basemaps.format(key=planet.key, mosaic_name=mosaic_name),
+        url=planet.basemaps.format(key=planet.key, mosaic_name=mosaic_name, color=color),
         name="Planet© Mosaic",
         attribution=planet.attribution,
         show_loading = True
