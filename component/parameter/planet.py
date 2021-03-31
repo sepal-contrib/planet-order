@@ -8,3 +8,14 @@ if planet_key_file.is_file():
     
     with planet_key_file.open() as f:
         default_planet_key = f.read().strip()
+        
+planet_colors = [
+    'rgb',
+    'cir',
+    'ndvi',
+    'ndwi',
+    'vari',
+    'msavi2',
+    'mtvi2',
+    'tgi'
+]
