@@ -1,8 +1,14 @@
-# planet-order
-ordering planet data
+# planet order
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+This dasboard application based on the [sepal-ui](https://sepal-ui.readthedocs.io/en/latest/) framework, provide the user with a friendly interface to explore and download Planet Labs images.
 
 
-## Usage
+More information on usage can be found in the [doc](#)
+
+
+## Contribute
 
 first download the repository to your own sepal account 
 
