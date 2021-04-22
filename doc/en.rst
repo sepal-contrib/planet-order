@@ -104,15 +104,15 @@ Click on the palette btn on the top-left side of the map. This button will expan
 -   **ndvi** a viridis representation of the ndvi index ((nir-red)/(nir+red)) see `wikipedia <https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index>`_
 
 .. image:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/mosaic_select_rgb.png
-    :width: 32%
+    :width: 20%
     :align: left
     
 .. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/mosaic_select_cir.png
-    :width: 32%
+    :width: 20%
     :align: left
 
 .. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/mosaic_select_ndvi.png
-    :width: 32%
+    :width: 20%
     :align: left
 
 Download Data
