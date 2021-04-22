@@ -26,14 +26,14 @@ def check_key():
     """raise an error if the key is not validataed"""
     
     if not planet.valid:
-        raise Exception(cm.planet.invalid_key)
+        raise Exception(cm.planet.key.invalid)
     
     return
 
 def validate_key(key, out):
     """Validate the API key and save it the key variable"""
     
-    out.add_msg(cm.planet.test_key)
+    out.add_msg(cm.planet.key.test)
     
     # get all the subscriptions 
     resp = requests.get(planet.url, auth=(key, ''))
@@ -50,7 +50,7 @@ def validate_key(key, out):
     
     planet.key = key
     
-    out.add_msg(cm.planet.valid_key, 'success')
+    out.add_msg(cm.planet.key.valid, 'success')
     
     return 
 
@@ -60,7 +60,7 @@ def order_basemaps(key, out):
     # checking the key validity
     validate_key(key, out)
     
-    out.add_msg(cm.planet.load_mosaics)
+    out.add_msg(cm.planet.mosaic.load)
     
     # autheticate to planet
     planet.client = api.ClientV1(api_key=planet.key)
@@ -68,7 +68,7 @@ def order_basemaps(key, out):
     # get the basemap names 
     mosaics = [m['name'] for m in planet.client.get_mosaics().get()['mosaics']]
     
-    out.add_msg(cm.planet.mosaic_loaded, 'success')
+    out.add_msg(cm.planet.mosaic.complete, 'success')
     
     return mosaics
 

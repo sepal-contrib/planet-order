@@ -1,19 +1,4 @@
 {
-    "viz": {
-        "btn": "visualize parameters",
-        "txt": "This process will give you a sum-up of the order you're about to process"
-    },
-    "order": {
-        "no_aoi": "Please select an AOI in step 1",
-        "btn": "Order mosaic",
-        "txt": "This tile get the availables orders coresponding to the vizualisation parameters. The process will retreive all the orders and update the order selector in the next tile. If everything is coorect then the download btn will be free."
-    },
-    "download": {
-        "no_order": "please select an order name. If non is uvailable please run the Ordering process.",
-        "btn":  "Download mosaic",
-        "txt": "This tile will download the orders selected on the step 1 AOI to your Sepal folder",
-        "select": "Select order"
-    },
     "key": {
         "password": {
             "label": "API key",
@@ -26,11 +11,20 @@
         "label": "Select mosaic"
     },
     "planet": {
-        "invalid_key": "The current key is invalid, please provide a valid Planet key",
-        "test_key": "We are currently checking your API key",
-        "valid_key": "Your key have been validated",
-        "load_mosaics": "We are retrieving the mosaics list",
-        "mosaic_loaded": "The list of mosaic is available in the Mosaic selector",
+        "title": "Explore planet data",
+        "btn": {
+            "check": "Check API key",
+            "download": "Download images"
+        },
+        "key": {
+            "invalid": "The current key is invalid, please provide a valid Planet key",
+            "test": "We are currently checking your API key",
+            "valid": "Your key have been validated"
+        },
+        "mosaic": {
+            "load": "We are retrieving the mosaics list",
+            "complete": "The list of mosaic is available in the Mosaic selector"
+    },
         "export": "exporting planet tiles",
         "file_exist": "The file \"{}\" already exist in your sepal directory, aborting.",
         "down_file": "downlaoding \"{}\" to SEPAL",
@@ -40,6 +34,7 @@
         "aoi": "loading aoi",
         "grid": "generating planet grid",
         "tiles": "loading tiles",
-        "done": "loading complete"
+        "done": "loading complete",
+        "aoi_border": "AOI border"
     }
 }

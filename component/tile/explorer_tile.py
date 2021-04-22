@@ -18,8 +18,8 @@ class ExplorerTile(sw.Tile):
         
         # create the widgets 
         self.api_key = cw.CustomPassword()
-        self.check_key = sw.Btn('check', block = True)
-        self.down_quads = sw.Btn('download', block = True, disabled = True, class_ = 'mt-5').hide()
+        self.check_key = sw.Btn(cm.planet.btn.check, block = True)
+        self.down_quads = sw.Btn(cm.planet.btn.download, block = True, disabled = True, class_ = 'mt-5').hide()
         self.api_alert = sw.Alert()
         self.select = cw.DynamicSelect()
         self.m = cw.DownMap()
@@ -38,7 +38,7 @@ class ExplorerTile(sw.Tile):
         # inster everything in the tile
         super().__init__(
             'explorer_tile',
-            "Explore planet data",
+            cm.planet.title,
             inputs = [layout]
         )
         
