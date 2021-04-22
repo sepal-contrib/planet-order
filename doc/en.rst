@@ -1,7 +1,7 @@
 Planet order
 ============
 
-This dasboard application based on the [sepal-ui](https://sepal-ui.readthedocs.io/en/latest/) framework, provide the user with a friendly interface to explore and download Planet Labs images.
+This dasboard application based on the `sepal-ui <https://sepal-ui.readthedocs.io/en/latest/>`_ framework, provide the user with a friendly interface to explore and download Planet Labs images.
 
 .. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/demo.gif
 
@@ -9,23 +9,23 @@ This dasboard application based on the [sepal-ui](https://sepal-ui.readthedocs.i
     
 .. warning::
 
-    in order to start this module, you need to have register on the planet NICFI contract (`Register NICFI PlanetLab <https://docs.sepal.io/en/latest/setup/register.html#sign-up-for-planet-lab-data>`_) and connect your GEE account to SEPAL (`connect GEE to SEPAL <https://docs.sepal.io/en/latest/setup/gee.html#connection-between-gee-and-sepal>`).
+    in order to start this module, you need to have register on the planet NICFI contract (`Register NICFI PlanetLab <https://docs.sepal.io/en/latest/setup/register.html#sign-up-for-planet-lab-data>`_) and connect your GEE account to SEPAL (`connect GEE to SEPAL <https://docs.sepal.io/en/latest/setup/gee.html#connection-between-gee-and-sepal>`_).
     
 In the landing page of our module at the bottom of the rigth drawer, You'll find 3 buttons: 
 
 -   The :code source: will open in a new tab the GitHub repository that is used to create this module. our code is open-source and distributed under the MIT License.
     
-    .. image:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/code_source.png
+    .. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/code_source.png
         :width: 17%
 
 -   The :wiki: button will lead you to this page
 
-    .. image:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/wiki.png
+    .. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/wiki.png
         :width: 17%
         
 -   The :bug report: will open in a new tab the isse tracker of our GitHub repository. You can write here if you experience bugs or if you have any feature request. Our maintainer will answer as fast as possible.
 
-    .. image:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/bug_report.png
+    .. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/bug_report.png
         :width: 17%
     
 Select an AOI
@@ -91,11 +91,11 @@ Select Mosaic
 
 Now you can select any mosaic in the mosaic dropdown on top of the map. using the :code:`next` or :code:`prev` button will jump to the next/prev mosaic in the list (they are in chronological order)
 
-Once a mosaic is selected the tool will zoom on your AOI and display it in blue. It will add the Planet Lab grid in gold that are touching the AOI. Each cell of the grid represents 1 image to download. 
+Once a mosaic is selected the tool will zoom on your AOI and display it in blue. It will add the Planet Lab grid cells (in gold) that are touching the AOI. Each cell of the grid represents 1 image to download. 
 
 .. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/mosaic_select_rgb.png
 
-    retreive activated
+    download activated
 
 Click on the palette btn on the top-left side of the map. This button will expand and show the 3 different color combo available:  
 
@@ -103,23 +103,17 @@ Click on the palette btn on the top-left side of the map. This button will expan
 -   **cir** (nir, red, green)
 -   **ndvi** a viridis representation of the ndvi index ((nir-red)/(nir+red)) see `wikipedia <https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index>`_
 
-.. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/mosaic_select_rgb.png
-    :figwidth: 30%
+.. image:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/mosaic_select_rgb.png
+    :width: 32%
     :align: left
-    
-    rgb
     
 .. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/mosaic_select_cir.png
-    :figwidth: 30%
+    :width: 32%
     :align: left
-    
-    cir
 
 .. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/mosaic_select_ndvi.png
-    :figwidth: 30%
+    :width: 32%
     :align: left
-    
-    ndvi
 
 Download Data
 -------------
