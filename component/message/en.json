@@ -32,11 +32,15 @@
         "mosaic": {
             "load": "We are retrieving the mosaics list",
             "complete": "The list of mosaic is available in the Mosaic selector"
-    },
-        "export": "exporting planet tiles",
-        "file_exist": "The file \"{}\" already exist in your sepal directory, aborting.",
-        "down_file": "downlaoding \"{}\" to SEPAL",
-        "down_end": "Image successfully downloaded to \"{}\""
+        },
+        "down": {
+            "start": "exporting planet tiles",
+            "progress": "Images downloaded to Sepal",
+            "not_found": "Image {} not found",
+            "done": "Image {} downloaded to SEPAL",
+            "end": "Out of {} requested images, {} have been downloaded, {} skipped and {} failed",
+            "exist": "The image {} already exist in your sepal directory, aborting"
+        }
     },
     "map": {
         "aoi": "loading aoi",
