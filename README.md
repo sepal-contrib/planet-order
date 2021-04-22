@@ -6,7 +6,7 @@ This dasboard application based on the [sepal-ui](https://sepal-ui.readthedocs.i
 
 ![demo](https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/demo.gif)
 
-More information on usage can be found in the [doc](#)
+More information on usage can be found in the [doc](https://docs.sepal.io/en/latest/modules/dwn/planet_order.html)
 
 
 ## Contribute

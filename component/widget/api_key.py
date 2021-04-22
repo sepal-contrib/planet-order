@@ -15,7 +15,7 @@ class CustomPassword(sw.PasswordField):
         
         
     def _toggle_pwd(self, widget, event, data):
-        """only authorize the visibility toogle if the lassword is different than the default key"""
+        """only authorize the visibility toogle if the password is different than the default key"""
         
         # clean the error_message attribute 
         self.error_messages = None
@@ -29,6 +29,7 @@ class CustomPassword(sw.PasswordField):
         return self
     
     def _check_default(self, change):
+        """automatically hide the key if the user write the default one"""
         
         self.error_messages = None
         

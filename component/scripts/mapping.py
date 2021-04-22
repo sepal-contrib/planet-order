@@ -25,7 +25,7 @@ def display_on_map(m, aoi_io, out):
     aoi = aoi_io.get_aoi_ee()
     empty = ee.Image().byte()
     outline = empty.paint(**{'featureCollection': aoi, 'color': 1, 'width': 3})
-    m.addLayer(outline, {'palette': v.theme.themes.dark.secondary}, 'AOI borders')
+    m.addLayer(outline, {'palette': v.theme.themes.dark.secondary}, cm.map.aoi_border)
     
     return 
 

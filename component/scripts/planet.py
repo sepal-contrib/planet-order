@@ -1,5 +1,6 @@
 # this file will be used as a singleton object in the explorer tile 
 
+import time
 import requests
 from types import SimpleNamespace
 
@@ -26,14 +27,14 @@ def check_key():
     """raise an error if the key is not validataed"""
     
     if not planet.valid:
-        raise Exception(cm.planet.invalid_key)
+        raise Exception(cm.planet.key.invalid)
     
     return
 
 def validate_key(key, out):
     """Validate the API key and save it the key variable"""
     
-    out.add_msg(cm.planet.test_key)
+    out.add_msg(cm.planet.key.test)
     
     # get all the subscriptions 
     resp = requests.get(planet.url, auth=(key, ''))
@@ -50,7 +51,7 @@ def validate_key(key, out):
     
     planet.key = key
     
-    out.add_msg(cm.planet.valid_key, 'success')
+    out.add_msg(cm.planet.key.valid, 'success')
     
     return 
 
@@ -60,7 +61,7 @@ def order_basemaps(key, out):
     # checking the key validity
     validate_key(key, out)
     
-    out.add_msg(cm.planet.load_mosaics)
+    out.add_msg(cm.planet.mosaic.load)
     
     # autheticate to planet
     planet.client = api.ClientV1(api_key=planet.key)
@@ -68,7 +69,7 @@ def order_basemaps(key, out):
     # get the basemap names 
     mosaics = [m['name'] for m in planet.client.get_mosaics().get()['mosaics']]
     
-    out.add_msg(cm.planet.mosaic_loaded, 'success')
+    out.add_msg(cm.planet.mosaic.complete, 'success')
     
     return mosaics
 
@@ -106,7 +107,7 @@ def display_basemap(mosaic_name, m, out, color=None):
 def download_quads(aoi_name, mosaic_name, grid, out):
     """export each quad to the appropriate folder"""
     
-    out.add_msg(cm.planet.export)
+    out.add_msg(cm.planet.down.start)
     
     # get the mosaic from the mosaic name 
     mosaics = planet.client.get_mosaics().get()['mosaics'] 
@@ -118,22 +119,45 @@ def download_quads(aoi_name, mosaic_name, grid, out):
     for i, row in grid.iterrows():
         quads.append(f'{int(row.x):04d}-{int(row.y):04d}')
         
-    
-    for quad_id in quads:
+    # download the quads 
+    # create lists to display information to the user at the end
+    skip = down = fail = 0
+    for i, quad_id in enumerate(quads):
+        
+        # update the progress in advance 
+        out.update_progress(i/len(quads), cm.planet.down.progress)
         
         # check file existence 
         res_dir = cp.get_mosaic_dir(aoi_name, mosaic_name)
         file = res_dir.joinpath(f'{quad_id}.tif')
         
         if file.is_file():
-            out.add_msg(cm.planet.file_exist.format(file))
+            out.append_msg(cm.planet.down.exist.format(quad_id))
+            skip += 1
+            time.sleep(.3)
             continue
             
-        out.add_msg(cm.planet.down_file.format(file))
-        quad = planet.client.get_quad_by_id(mosaic, quad_id).get()
-        planet.client.download_quad(quad).get_body().write(file)
+        try:
+            quad = planet.client.get_quad_by_id(mosaic, quad_id).get()
         
-    out.add_msg(cm.planet.down_end.format(res_dir), "success")
+        except Exception as e:
+            out.append_msg(cm.planet.down.not_found.format(quad_id))
+            fail += 1
+            time.sleep(.3)
+            continue
+
+        out.append_msg(cm.planet.down.done.format(quad_id)) #write first to make sure the message stays on screen 
+        planet.client.download_quad(quad).get_body().write(file)
+        down += 1
+        
+    # adapt the color to the number of image effectively downloaded 
+    color = 'success'
+    if fail > .8*len(quads): # we missed nearly everything
+        color = "error"
+    elif fail > .5*len(quads): # we missed more than 50%
+        color = "warning"
+        
+    out.add_msg(cm.planet.down.end.format(len(quads), down, skip, fail), color)
     
     return
     
