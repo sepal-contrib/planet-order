@@ -23,14 +23,13 @@ class ExplorerTile(sw.Tile):
         self.api_alert = sw.Alert()
         self.select = cw.DynamicSelect()
         self.m = cw.DownMap()
-        txt = v.Html(tag='p', children=['I have plenty of room for explainations'])
         
         # create a layout 
         layout = v.Layout(
             row = True,
             align_center = True,
             children = [
-                v.Flex(xs3=True, class_ = "ma-2", children = [txt, v.Divider(class_='mb-3'), self.api_key, self.check_key, self.down_quads, self.api_alert]),
+                v.Flex(xs3=True, class_ = "ma-2", children = [v.Divider(class_='mb-3'), self.api_key, self.check_key, self.down_quads, self.api_alert]),
                 v.Flex(children = [self.select, self.m])
             ]
         )

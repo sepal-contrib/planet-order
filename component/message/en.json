@@ -1,4 +1,12 @@
 {
+    "app": {
+        "title": "Planet ordering module",
+        "drawer_item": {
+            "aoi": "AOI selection",
+            "retrieve": "Retrieve images",
+            "about": "About"
+        }
+    },
     "key": {
         "password": {
             "label": "API key",
