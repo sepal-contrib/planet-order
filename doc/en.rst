@@ -16,17 +16,17 @@ In the landing page of our module at the bottom of the rigth drawer, You'll find
 -   The :code source: will open in a new tab the GitHub repository that is used to create this module. our code is open-source and distributed under the MIT License.
     
     .. image:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/code_source.png
-        :width: 20%
+        :width: 17%
 
 -   The :wiki: button will lead you to this page
 
     .. image:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/wiki.png
-        :width: 20%
+        :width: 17%
         
--   The :bug report: will open in a new tab the isse tracker of our GitHub repository. You can write here if you experience bugs or if you have any feature request. Our maintainer will answer as fast as possible
+-   The :bug report: will open in a new tab the isse tracker of our GitHub repository. You can write here if you experience bugs or if you have any feature request. Our maintainer will answer as fast as possible.
 
     .. image:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/bug_report.png
-        :width: 20%
+        :width: 17%
     
 Select an AOI
 -------------
@@ -36,6 +36,7 @@ The application use the same AOI selector that you will find in lots of other ap
 In this application multiple selection methods are available by selecting options in the first dropdown menu:
 
 .. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/method.png
+    :width: 50%
 
     selection methods
     
@@ -59,7 +60,7 @@ Load PLanet Lab information
 
 To use the module you'll need the Planet Lab API key associated to you Planet lab account
 
-.. tip::
+.. note::
 
     If you're not yet register to Planet please follow our `documentation <https://docs.sepal.io/en/latest/setup/register.html#sign-up-for-planet-lab-data>`_
     
@@ -80,7 +81,7 @@ Provide your API key and click on :code:`check API key`. The tool will verify th
 
     Don't show you're API key when you are sharing your screen with others
     
-.. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/retreive_active.png
+.. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/retreive_activate.png
 
     retreive activated
 
@@ -104,16 +105,19 @@ Click on the palette btn on the top-left side of the map. This button will expan
 
 .. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/mosaic_select_rgb.png
     :figwidth: 30%
+    :align: left
     
     rgb
     
 .. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/mosaic_select_cir.png
     :figwidth: 30%
+    :align: left
     
     cir
 
 .. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/mosaic_select_ndvi.png
     :figwidth: 30%
+    :align: left
     
     ndvi
 
