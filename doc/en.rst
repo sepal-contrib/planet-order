@@ -88,7 +88,7 @@ Provide your API key and click on :code:`check API key`. The tool will verify th
 Select Mosaic
 -------------
 
-Now you can select any mosaic in the mosaic dropdown on top of the map. using the :code:`next`or :code:`prev`button will jump to the next/prev mosaic in the list (they are in chronological order)
+Now you can select any mosaic in the mosaic dropdown on top of the map. using the :code:`next` or :code:`prev` button will jump to the next/prev mosaic in the list (they are in chronological order)
 
 Once a mosaic is selected the tool will zoom on your AOI and display it in blue. It will add the Planet Lab grid in gold that are touching the AOI. Each cell of the grid represents 1 image to download. 
 
@@ -96,11 +96,11 @@ Once a mosaic is selected the tool will zoom on your AOI and display it in blue.
 
     retreive activated
 
-Click on the palette btn on the top-left side of the map. This button will expand and show the 3 different color combo available: 
+Click on the palette btn on the top-left side of the map. This button will expand and show the 3 different color combo available:  
 
 -   **rbg** (red, blue, green)
 -   **cir** (nir, red, green)
--   **ndvi** a viridis representation of the ndvi index ((nir-red)/(nir+red)) see `wikipedia <https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index`_
+-   **ndvi** a viridis representation of the ndvi index ((nir-red)/(nir+red)) see `wikipedia <https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index>`_
 
 .. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/mosaic_select_rgb.png
     :figwidth: 30%
@@ -122,11 +122,11 @@ Download Data
 
 Once you are satisfied with your mosaic selection, you can click on the :code:`download image` button. This will launch the downloading process of your images from Planet server to you SEPAL folder. 
 
-The images will be stored in the following folder : :code:`/home/<sepalID>/module_results/planet-order/<aoi_name>/<mosaic_name>/.
+The images will be stored in the following folder : :code:`/home/<sepalID>/module_results/planet-order/<aoi_name>/<mosaic_name>/`.
 
 .. tip:: 
 
-    In the parent folder (:code:`/home/<sepalID>/module_results/planet-order/<aoi_name>/) you will find a .geojson file of the planet grid. This can be useful for other tools. 
+    In the parent folder (:code:`/home/<sepalID>/module_results/planet-order/<aoi_name>/`) you will find a .geojson file of the planet grid. This can be useful for other tools. 
     
 .. note::
 
