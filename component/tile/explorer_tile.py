@@ -9,10 +9,10 @@ from component.message import cm
 
 class ExplorerTile(sw.Tile):
     
-    def __init__(self, aoi_io):
+    def __init__(self, aoi_model):
         
         # gather the io 
-        self.aoi_io = aoi_io
+        self.aoi_model = aoi_model
         
         self.mapped = False # to set if the map have already been zoomed on a specific region or not
         
@@ -21,7 +21,7 @@ class ExplorerTile(sw.Tile):
         self.check_key = sw.Btn(cm.planet.btn.check, block = True)
         self.down_quads = sw.Btn(cm.planet.btn.download, block = True, disabled = True, class_ = 'mt-5').hide()
         self.api_alert = sw.Alert()
-        self.select = cw.DynamicSelect()
+        self.select = cw.DynamicSelect().disable()
         self.m = cw.DownMap()
         
         # create a layout 
@@ -56,7 +56,7 @@ class ExplorerTile(sw.Tile):
         cs.display_basemap(self.select.v_model, self.m, self.m.state, self.m.combo)
         
         # finish the state 
-        self.m.state.add_msg(cm.map.done, done=True)
+        self.m.state.add_msg(cm.map.done, loading=False)
         
         return self
             
@@ -74,6 +74,8 @@ class ExplorerTile(sw.Tile):
         except Exception as e:
             self.api_alert.add_msg(str(e), 'error')
             
+        self.select.unable()
+            
         widget.toggle_loading()
         
         return self
@@ -83,10 +85,8 @@ class ExplorerTile(sw.Tile):
         
         ds = change['owner']
         
-        # block all the btn 
-        ds.prev.disabled = True
-        ds.next.disabled = True
-        ds.select.disabled = True
+        # block all the btn
+        ds.disable()
         
         # unable the btn 
         if change['new']:
@@ -94,27 +94,25 @@ class ExplorerTile(sw.Tile):
             
         # update the map 
         if not self.mapped:
-            self.m.zoom_ee_object(self.aoi_io.get_aoi_ee().geometry())
+            self.m.zoom_bounds(self.aoi_model.total_bounds())
             
             # unsure that this operation is only carried out once
             self.mapped = True
             
         # add the aoi and center the map on it
-        cs.display_on_map(self.m, self.aoi_io, self.m.state)
+        cs.display_on_map(self.m, self.aoi_model, self.m.state)
             
         # add the grid 
-        self.grid = cs.set_grid(self.aoi_io, self.m, self.m.state)
+        self.grid = cs.set_grid(self.aoi_model, self.m, self.m.state)
             
         # display the mosaic on the map 
         cs.display_basemap(self.select.v_model, self.m, self.m.state, self.m.combo)
         
         # finish the state 
-        self.m.state.add_msg(cm.map.done, done=True)
+        self.m.state.add_msg(cm.map.done, loading=False)
         
         # release the btn
-        ds.prev.disabled = False
-        ds.next.disabled = False
-        ds.select.disabled = False
+        ds.unable()
         
         return self
     
@@ -124,7 +122,7 @@ class ExplorerTile(sw.Tile):
         widget.toggle_loading()
         
         try:
-            cs.download_quads(self.aoi_io.get_aoi_name(), self.select.v_model, self.grid, self.api_alert)
+            cs.download_quads(self.aoi_model.name, self.select.v_model, self.grid, self.api_alert)
         
         except Exception as e:
             self.api_alert.add_msg(str(e), 'error')

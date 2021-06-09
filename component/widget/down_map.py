@@ -29,7 +29,7 @@ class DownMap(sm.SepalMap, HasTraits):
         )
         
         # create the map 
-        super().__init__()
+        super().__init__(gee=False)
         
         # add the widget to the map (as to left and right items)
         self.add_control(WidgetControl(widget=self.state, position='topleft'))

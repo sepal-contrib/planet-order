@@ -1,4 +1,5 @@
 from sepal_ui import sepalwidgets as sw 
+from sepal_ui import color as sc
 import ipyvuetify as v
 from ipywidgets import jslink
 
@@ -12,7 +13,7 @@ class DynamicSelect(v.Layout):
             _metadata = {'increm': -1},
             x_small = True,
             class_ = 'ml-2 mr-2',
-            color = v.theme.themes.dark.secondary,
+            color = sc.secondary,
             children = [
                 v.Icon(children = ['mdi-chevron-left']),
                 cm.dynamic_select.prev
@@ -23,7 +24,7 @@ class DynamicSelect(v.Layout):
             _metadata = {'increm': 1},
             x_small = True,
             class_ = 'ml-2 mr-2',
-            color = v.theme.themes.dark.secondary,
+            color = sc.secondary,
             children = [
                 cm.dynamic_select.next,
                 v.Icon(children = ['mdi-chevron-right'])
@@ -84,6 +85,22 @@ class DynamicSelect(v.Layout):
             pos = 0
             
         self.select.v_model = self.select.items[pos]
+        
+        return self
+    
+    def disable(self):
+        
+        self.prev.disabled = True
+        self.next.disabled = True
+        self.select.disabled = True
+        
+        return self
+    
+    def unable(self):
+        
+        self.prev.disabled = False
+        self.next.disabled = False
+        self.select.disabled = False
         
         return self
             

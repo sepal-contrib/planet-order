@@ -9,6 +9,8 @@ import ipyvuetify as v
 import geemap
 import numpy as np
 from pyproj import CRS, Transformer
+from sepal_ui import color as sc
+from ipyleaflet import GeoJSON
 
 from component import parameter as cp
 from component.message import cm
@@ -17,26 +19,32 @@ ee.Initialize()
 
 from component.message import cm
 
-def display_on_map(m, aoi_io, out):
+sepal_attribution = "SEPAL©"
+
+def display_on_map(m, aoi_model, out):
     """display the aoi on the map"""
     
-    out.add_msg(cm.map.aoi)
+    out.add_msg(cm.map.aoi, loading=True)
     
-    aoi = aoi_io.get_aoi_ee()
-    empty = ee.Image().byte()
-    outline = empty.paint(**{'featureCollection': aoi, 'color': 1, 'width': 3})
-    m.addLayer(outline, {'palette': v.theme.themes.dark.secondary}, cm.map.aoi_border)
+    aoi = aoi_model.get_ipygeojson()
+    aoi.style = {"stroke": True, "color": sc.info, "weight": 2, "opacity": 1, "fill": False}
+    aoi.name = "aoi"
+    aoi.attribution = sepal_attribution
+    
+    # remove any existing layer with the same name
+    
+    m.add_layer(aoi)
     
     return 
 
-def set_grid(aoi_io, m, out):
+def set_grid(aoi_model, m, out):
     """create a grid adapted to the aoi and to the planet initial grid"""
     
-    out.add_msg(cm.map.grid)
+    out.add_msg(cm.map.grid, loading=True)
     
     # check the grid filename 
-    aoi_name = aoi_io.get_aoi_name()
-    grid_file = cp.get_aoi_dir(aoi_name).joinpath(f'{aoi_name}_grid.geojson')
+    aoi_name = aoi_model.name
+    grid_file = cp.get_aoi_dir(aoi_name)/f'{aoi_name}_grid.geojson'
     
     # read the grid if possible
     if grid_file.is_file():
@@ -46,12 +54,7 @@ def set_grid(aoi_io, m, out):
     else:
     
         # get the shape of the aoi in EPSG:3857 proj 
-        aoi_json = geemap.ee_to_geojson(aoi_io.get_aoi_ee())
-        aoi_shp = unary_union([sg.shape(feat['geometry']) for feat in aoi_json['features']])
-        aoi_gdf = gpd.GeoDataFrame({'geometry': [aoi_shp]}, crs="EPSG:4326").to_crs('EPSG:3857')
-        
-        # extract the aoi shape 
-        aoi_shp_proj = aoi_gdf['geometry'][0]
+        aoi_gdf = aoi_model.gdf.to_crs('EPSG:3857')
     
         # retreive the bb 
         aoi_bb = sg.box(*aoi_gdf.total_bounds)
@@ -106,7 +109,8 @@ def set_grid(aoi_io, m, out):
         grid = gpd.GeoDataFrame({'x':x, 'y':y, 'names':names, 'geometry':squares}, crs='EPSG:3857')
 
         # cut the grid to the aoi extends 
-        mask = grid.intersects(aoi_shp_proj)
+        # the geometry is thus dissolve into 1 single geometry
+        mask = grid.intersects(aoi_gdf.dissolve()['geometry'][0])
         grid = grid.loc[mask]
     
         # project back to 4326
@@ -115,13 +119,14 @@ def set_grid(aoi_io, m, out):
         # save the grid
         grid_gdf.to_file(grid_file, driver='GeoJSON')
     
-    # convert the grid to ee for display
-    json_df = json.loads(grid_gdf.to_json())
-    grid_ee = geemap.geojson_to_ee(json_df)
+    # convert the grid to geojson for display 
+    grid_geojson = GeoJSON(
+        data = grid_gdf.__geo_interface__,
+        style = { "stroke": True, "color": sc.primary, "weight": 2, "opacity": 1, "fill": False},
+        name = 'AOI Planet© Grid'
+    )
+    grid_geojson.attribution = sepal_attribution
     
-    # display the grid on the map
-    empty = ee.Image().byte()
-    outline = empty.paint(featureCollection = grid_ee, color = 1, width = 3)
-    m.addLayer(outline, {'palette': v.theme.themes.dark.primary}, 'AOI Planet© Grid', True)
+    m.add_layer(grid_geojson)
     
     return grid_gdf 
