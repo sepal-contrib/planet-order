@@ -14,7 +14,7 @@ planet = SimpleNamespace()
 
 # parameters
 planet.url = 'https://api.planet.com/auth/v1/experimental/public/my/subscriptions'
-planet.basemaps = "https://tiles.planet.com/basemaps/v1/planet-tiles/{mosaic_name}/gmap/{{z}}/{{x}}/{{y}}.png?api_key={key}&proc={color}"
+planet.basemaps = "https://tiles.planet.com/basemaps/v1/planet-tiles/{mosaic_name}/gmap/{{z}}/{{x}}/{{y}}.png?api_key={key}"
 planet.attribution = "Imagery © Planet Labs Inc."
 
 # attributes
@@ -67,29 +67,31 @@ def order_basemaps(key, out):
     planet.client = api.ClientV1(api_key=planet.key)
     
     # get the basemap names 
-    mosaics = [m['name'] for m in planet.client.get_mosaics().get()['mosaics']]
-    
+    # to use when PLanet decide to update it's API, until then I manually retreive the mosaics
+    #mosaics = planet.client.get_mosaics().get()['mosaics']
+    url = planet.client._url('basemaps/v1/mosaics')
+    mosaics = planet.client._get(url, api.models.Mosaics, params={'_page_size': 1000}).get_body().get()['mosaics']
+
     out.add_msg(cm.planet.mosaic.complete, 'success')
     
-    return mosaics
+    return [m['name'] for m in mosaics]
 
-def display_basemap(mosaic_name, m, out, color=None):
+def display_basemap(mosaic_name, m, out, color):
     """display the planet mosaic basemap on the map"""
     
     out.add_msg(cm.map.tiles)
     
     # set the color if necessary 
-    if not color:
-        color = cp.planet_colors[0]
+    color_option = "" if color == "default" else f"&proc={color}"
     
     # remove the existing layers with planet attribution 
     for layer in m.layers:
         if layer.attribution == planet.attribution: 
-            m.remove_layer(layer)
+            m.remove_layer(layer)    
             
     # create a new Tile layer on the map 
     layer = TileLayer(
-        url=planet.basemaps.format(key=planet.key, mosaic_name=mosaic_name, color=color),
+        url=planet.basemaps.format(key=planet.key, mosaic_name=mosaic_name)+color_option,
         name="Planet© Mosaic",
         attribution=planet.attribution,
         show_loading = True
@@ -107,12 +109,13 @@ def display_basemap(mosaic_name, m, out, color=None):
 def download_quads(aoi_name, mosaic_name, grid, out):
     """export each quad to the appropriate folder"""
     
+    # a bool_variable to trigger a specifi error message when the mosaic cannot be downloaded
+    view_only = False
+    
     out.add_msg(cm.planet.down.start)
     
     # get the mosaic from the mosaic name 
-    mosaics = planet.client.get_mosaics().get()['mosaics'] 
-    mosaic_names = [m['name'] for m in mosaics]
-    mosaic = mosaics[mosaic_names.index(mosaic_name)]
+    mosaic = planet.client.get_mosaic_by_name(mosaic_name).get()['mosaics'][0]
     
     # construct the quad list 
     quads = []
@@ -137,9 +140,9 @@ def download_quads(aoi_name, mosaic_name, grid, out):
             time.sleep(.3)
             continue
             
+        # catch error relative of quad existence
         try:
             quad = planet.client.get_quad_by_id(mosaic, quad_id).get()
-        
         except Exception as e:
             out.append_msg(cm.planet.down.not_found.format(quad_id))
             fail += 1
@@ -147,7 +150,17 @@ def download_quads(aoi_name, mosaic_name, grid, out):
             continue
 
         out.append_msg(cm.planet.down.done.format(quad_id)) #write first to make sure the message stays on screen 
-        planet.client.download_quad(quad).get_body().write(file)
+        
+        # specific loop (yes it's ugly) to catch people that didn't use a key allowed to download the asked tiles
+        try:
+            planet.client.download_quad(quad).get_body().write(file)
+        except Exception as e:
+            out.append_msg(cm.planet.down.no_access)
+            fail += 1
+            view_only = True
+            time.sleep(.3)
+            continue
+            
         down += 1
         
     # adapt the color to the number of image effectively downloaded 
@@ -157,24 +170,7 @@ def download_quads(aoi_name, mosaic_name, grid, out):
     elif fail > .5*len(quads): # we missed more than 50%
         color = "warning"
         
-    out.add_msg(cm.planet.down.end.format(len(quads), down, skip, fail), color)
+    out.add_msg(cm.planet.down.end.format(len(quads), down, skip, fail), color) 
+    if view_only: out.append_msg(cm.planet.down.view_only, type_=color)
     
     return
-    
-    
-    
-    
-    
-    
-
-
-    
-    
-    
-
-
-    
-    
-    
-    
-    

@@ -97,8 +97,9 @@ Once a mosaic is selected the tool will zoom on your AOI and display it in blue.
 
     download activated
 
-Click on the palette btn on the top-left side of the map. This button will expand and show the 3 different color combo available:  
+Click on the palette btn on the top-left side of the map. This button will expand and show the 4 different color combo available:  
 
+-   **default** the default color combo defined by planet, it can be one of **rgb** or **cir**
 -   **rbg** (red, blue, green)
 -   **cir** (nir, red, green)
 -   **ndvi** a viridis representation of the ndvi index ((nir-red)/(nir+red)) see `wikipedia <https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index>`_
@@ -124,7 +125,7 @@ The images will be stored in the following folder : :code:`/home/<sepalID>/modul
     
 .. note::
 
-    If the requested image is not available (the grid point to water area, the image was to cloudy so filtered by Planet.. etc) the image will be skiped. 
-    If the image already exist in your folder it will be skipped as well. This behaviour allow you to restart a process if your SEPAL conection crashed without restarting all the downloads.
+    If the requested image is not available (the grid point to water area, the image was to cloudy so filtered by Planet, you don't have the rights to download it.. etc) the image will fail. 
+    If the image already exist in your folder it will be skipped. This behaviour allow you to restart a process if your SEPAL conection crashed without restarting all the downloads.
 
     
