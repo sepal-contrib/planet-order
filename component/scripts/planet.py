@@ -109,10 +109,13 @@ def display_basemap(mosaic_name, m, out, color):
 def download_quads(aoi_name, mosaic_name, grid, out):
     """export each quad to the appropriate folder"""
     
+    # a bool_variable to trigger a specifi error message when the mosaic cannot be downloaded
+    view_only = False
+    
     out.add_msg(cm.planet.down.start)
     
     # get the mosaic from the mosaic name 
-    mosaic = planet.client.get_mosaic_by_name(mosaic_name).get()
+    mosaic = planet.client.get_mosaic_by_name(mosaic_name).get()['mosaics'][0]
     
     # construct the quad list 
     quads = []
@@ -137,9 +140,9 @@ def download_quads(aoi_name, mosaic_name, grid, out):
             time.sleep(.3)
             continue
             
+        # catch error relative of quad existence
         try:
             quad = planet.client.get_quad_by_id(mosaic, quad_id).get()
-        
         except Exception as e:
             out.append_msg(cm.planet.down.not_found.format(quad_id))
             fail += 1
@@ -147,7 +150,17 @@ def download_quads(aoi_name, mosaic_name, grid, out):
             continue
 
         out.append_msg(cm.planet.down.done.format(quad_id)) #write first to make sure the message stays on screen 
-        planet.client.download_quad(quad).get_body().write(file)
+        
+        # specific loop (yes it's ugly) to catch people that didn't use a key allowed to download the asked tiles
+        try:
+            planet.client.download_quad(quad).get_body().write(file)
+        except Exception as e:
+            out.append_msg(cm.planet.down.no_access)
+            fail += 1
+            view_only = True
+            time.sleep(.3)
+            continue
+            
         down += 1
         
     # adapt the color to the number of image effectively downloaded 
@@ -157,6 +170,7 @@ def download_quads(aoi_name, mosaic_name, grid, out):
     elif fail > .5*len(quads): # we missed more than 50%
         color = "warning"
         
-    out.add_msg(cm.planet.down.end.format(len(quads), down, skip, fail), color)
+    out.add_msg(cm.planet.down.end.format(len(quads), down, skip, fail), color) 
+    if view_only: out.append_msg(cm.planet.down.view_only, type_=color)
     
     return

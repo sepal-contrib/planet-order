@@ -39,7 +39,9 @@
             "not_found": "Image {} not found",
             "done": "Image {} downloaded to SEPAL",
             "end": "Out of {} requested images, {} have been downloaded, {} skipped and {} failed",
-            "exist": "The image {} already exist in your sepal directory, aborting"
+            "exist": "The image {} already exist in your sepal directory, aborting",
+            "no_access": "You don't have the right access to download this resource",
+            "view_only": "At least one of the missing tile was not downloaded because you don't have the right access to download the resources. Please see the module documentation or your Planet Lab profile to check their availability."
         }
     },
     "map": {
