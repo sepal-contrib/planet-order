@@ -14,7 +14,7 @@ planet = SimpleNamespace()
 
 # parameters
 planet.url = 'https://api.planet.com/auth/v1/experimental/public/my/subscriptions'
-planet.basemaps = "https://tiles.planet.com/basemaps/v1/planet-tiles/{mosaic_name}/gmap/{{z}}/{{x}}/{{y}}.png?api_key={key}&proc={color}"
+planet.basemaps = "https://tiles.planet.com/basemaps/v1/planet-tiles/{mosaic_name}/gmap/{{z}}/{{x}}/{{y}}.png?api_key={key}"
 planet.attribution = "Imagery © Planet Labs Inc."
 
 # attributes
@@ -73,23 +73,22 @@ def order_basemaps(key, out):
     
     return mosaics
 
-def display_basemap(mosaic_name, m, out, color=None):
+def display_basemap(mosaic_name, m, out, color):
     """display the planet mosaic basemap on the map"""
     
     out.add_msg(cm.map.tiles)
     
     # set the color if necessary 
-    if not color:
-        color = cp.planet_colors[0]
+    color_option = "" if color == "default" else f"&proc={color}"
     
     # remove the existing layers with planet attribution 
     for layer in m.layers:
         if layer.attribution == planet.attribution: 
-            m.remove_layer(layer)
+            m.remove_layer(layer)    
             
     # create a new Tile layer on the map 
     layer = TileLayer(
-        url=planet.basemaps.format(key=planet.key, mosaic_name=mosaic_name, color=color),
+        url=planet.basemaps.format(key=planet.key, mosaic_name=mosaic_name)+color_option,
         name="Planet© Mosaic",
         attribution=planet.attribution,
         show_loading = True
