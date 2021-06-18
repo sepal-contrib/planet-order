@@ -67,11 +67,14 @@ def order_basemaps(key, out):
     planet.client = api.ClientV1(api_key=planet.key)
     
     # get the basemap names 
-    mosaics = [m['name'] for m in planet.client.get_mosaics().get()['mosaics']]
-    
+    # to use when PLanet decide to update it's API, until then I manually retreive the mosaics
+    #mosaics = planet.client.get_mosaics().get()['mosaics']
+    url = planet.client._url('basemaps/v1/mosaics')
+    mosaics = planet.client._get(url, api.models.Mosaics, params={'_page_size': 1000}).get_body().get()['mosaics']
+
     out.add_msg(cm.planet.mosaic.complete, 'success')
     
-    return mosaics
+    return [m['name'] for m in mosaics]
 
 def display_basemap(mosaic_name, m, out, color):
     """display the planet mosaic basemap on the map"""
@@ -109,9 +112,7 @@ def download_quads(aoi_name, mosaic_name, grid, out):
     out.add_msg(cm.planet.down.start)
     
     # get the mosaic from the mosaic name 
-    mosaics = planet.client.get_mosaics().get()['mosaics'] 
-    mosaic_names = [m['name'] for m in mosaics]
-    mosaic = mosaics[mosaic_names.index(mosaic_name)]
+    mosaic = planet.client.get_mosaic_by_name(mosaic_name).get()
     
     # construct the quad list 
     quads = []
@@ -159,21 +160,3 @@ def download_quads(aoi_name, mosaic_name, grid, out):
     out.add_msg(cm.planet.down.end.format(len(quads), down, skip, fail), color)
     
     return
-    
-    
-    
-    
-    
-    
-
-
-    
-    
-    
-
-
-    
-    
-    
-    
-    
