@@ -1,7 +1,6 @@
 import json 
 from itertools import product
 
-import ee
 from shapely import geometry as sg
 from shapely.ops import unary_union
 import geopandas as gpd
@@ -13,10 +12,6 @@ from sepal_ui import color as sc
 from ipyleaflet import GeoJSON
 
 from component import parameter as cp
-from component.message import cm
-
-ee.Initialize()
-
 from component.message import cm
 
 sepal_attribution = "SEPAL©"
