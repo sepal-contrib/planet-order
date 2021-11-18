@@ -3,6 +3,8 @@
 import time
 import requests
 from types import SimpleNamespace
+import re
+from datetime import datetime
 
 from planet import api
 from ipyleaflet import TileLayer
@@ -22,6 +24,45 @@ planet.attribution = "Imagery © Planet Labs Inc."
 planet.valid = False
 planet.key = None
 planet.client = None
+
+# create the regex to match the different know planet datasets
+VISUAL = re.compile("^planet_medres_visual")  # will be removed from the selection
+ANALYTIC_MONTHLY = re.compile(
+    "^planet_medres_normalized_analytic_\d{4}-\d{2}_mosaic$"
+)  # NICFI monthly
+ANALYTIC_BIANUAL = re.compile(
+    "^planet_medres_normalized_analytic_\d{4}-\d{2}_\d{4}-\d{2}_mosaic$"
+)  # NICFI bianual
+
+
+def mosaic_name(mosaic):
+    """
+    Give back the shorten name of the mosaic so that it can be displayed on the thumbnails
+    Args:
+        mosaic (str): the mosaic full name
+    Return:
+        (str, str): the type and the shorten name of the mosaic
+    """
+
+    if ANALYTIC_MONTHLY.match(mosaic):
+        year = mosaic[34:38]
+        start = datetime.strptime(mosaic[39:41], "%m").strftime("%b")
+        res = f"{start} {year}"
+        type_ = "ANALYTIC_MONTHLY"
+    elif ANALYTIC_BIANUAL.match(mosaic):
+        year = mosaic[34:38]
+        start = datetime.strptime(mosaic[39:41], "%m").strftime("%b")
+        end = datetime.strptime(mosaic[47:49], "%m").strftime("%b")
+        res = f"{start}-{end} {year}"
+        type_ = "ANALYTIC_BIANUAL"
+    elif VISUAL.match(mosaic):
+        res = None  # ignored in this module
+        type_ = "VISUAL"
+    else:
+        res = mosaic[:15]  # not optimal but that's the max
+        type_ = "OTHER"
+
+    return type_, res
 
 
 def check_key():
@@ -79,9 +120,30 @@ def order_basemaps(key, out):
         .get()["mosaics"]
     )
 
+    # filter the mosaics in 3 groups
+    bianual, monthly, other, res = [], [], [], []
+    for m in mosaics:
+        name = m["name"]
+        type_, short = mosaic_name(name)
+
+        if type_ == "ANALYTIC_MONTHLY":
+            monthly.append({"text": short, "value": name})
+        elif type_ == "ANALYTIC_BIANUAL":
+            bianual.append({"text": short, "value": name})
+        elif type_ == "OTHER":
+            monthly.append({"text": short, "value": name})
+
+    # fill the results with the found mosaics
+    if len(bianual):
+        res += [{"header": "NICFI bianual"}] + bianual
+    if len(monthly):
+        res += [{"header": "NICFI monthly"}] + monthly
+    if len(other):
+        res += [{"header": "other"}] + other
+
     out.add_msg(cm.planet.mosaic.complete, "success")
 
-    return [m["name"] for m in mosaics]
+    return res
 
 
 def display_basemap(mosaic_name, m, out, color):
