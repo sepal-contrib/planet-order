@@ -2,6 +2,7 @@ import ipyvuetify as v
 
 from sepal_ui import sepalwidgets as sw
 from sepal_ui import mapping as sm
+from sepal_ui.scripts.utils import loading_button
 
 from component import widget as cw
 from component import scripts as cs
@@ -49,6 +50,14 @@ class ExplorerTile(sw.Tile):
         # inster everything in the tile
         super().__init__("explorer_tile", cm.planet.title, inputs=[layout])
 
+        # decorate the functions
+        self._get_mosaic = loading_button(
+            button=self.check_key, alert=self.api_alert, debug=True
+        )(self._get_mosaic)
+        self._download = loading_button(
+            button=self.down_quads, alert=self.api_alert, debug=True
+        )(self._download)
+
         # add js behaviour
         self.check_key.on_event("click", self._get_mosaic)
         self.select.observe(self._on_mosaic_select, "v_model")
@@ -71,19 +80,11 @@ class ExplorerTile(sw.Tile):
     def _get_mosaic(self, widget, event, data):
         """recover all the available mosaic with this specific key"""
 
-        widget.toggle_loading()
-
-        try:
-            items = cs.order_basemaps(self.api_key.v_model, self.api_alert)
-            self.select.set_items(items)
-            self.down_quads.show()
-
-        except Exception as e:
-            self.api_alert.add_msg(str(e), "error")
+        items = cs.order_basemaps(self.api_key.v_model, self.api_alert)
+        self.select.set_items(items)
+        self.down_quads.show()
 
         self.select.unable()
-
-        widget.toggle_loading()
 
         return self
 
@@ -126,16 +127,8 @@ class ExplorerTile(sw.Tile):
     def _download(self, widget, event, data):
         """download the selected quads using the selected mosaic"""
 
-        widget.toggle_loading()
-
-        try:
-            cs.download_quads(
-                self.aoi_model.name, self.select.v_model, self.grid, self.api_alert
-            )
-
-        except Exception as e:
-            self.api_alert.add_msg(str(e), "error")
-
-        widget.toggle_loading()
+        cs.download_quads(
+            self.aoi_model.name, self.select.v_model, self.grid, self.api_alert
+        )
 
         return self
