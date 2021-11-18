@@ -17,7 +17,7 @@ class DownMap(sm.SepalMap, HasTraits):
     def __init__(self):
 
         # create the extra widget
-        self.state = sw.StateBar(done=True)
+        self.state = sw.StateBar(loading=False)
         self.color = v.ListItemGroup(
             v_model=None,
             children=[v.ListItem(children=[c], value=c) for c in cp.planet_colors[:4]],

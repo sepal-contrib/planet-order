@@ -87,7 +87,7 @@ def order_basemaps(key, out):
 def display_basemap(mosaic_name, m, out, color):
     """display the planet mosaic basemap on the map"""
 
-    out.add_msg(cm.map.tiles)
+    out.add_msg(cm.map.tiles, loading=True)
 
     # set the color if necessary
     color_option = "" if color == "default" else f"&proc={color}"
