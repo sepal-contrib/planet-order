@@ -26,7 +26,8 @@ planet.key = None
 planet.client = None
 
 # create the regex to match the different know planet datasets
-VISUAL = re.compile("^planet_medres_visual")  # will be removed from the selection
+VISUAL = re.compile("^planet_medres_visual_")  # will be removed from the selection
+ANALYTIC = re.compile("^planet_medres_normalized_analytic_")
 ANALYTIC_MONTHLY = re.compile(
     "^planet_medres_normalized_analytic_\d{4}-\d{2}_mosaic$"
 )  # NICFI monthly
@@ -143,6 +144,8 @@ def order_basemaps(key, out):
 
     out.add_msg(cm.planet.mosaic.complete, "success")
 
+    print(mosaics)
+
     return res
 
 
@@ -152,12 +155,16 @@ def display_basemap(mosaic_name, m, out, color):
     out.add_msg(cm.map.tiles, loading=True)
 
     # set the color if necessary
-    color_option = "" if color == "default" else f"&proc={color}"
+    color_option = "" if color == "visual" else f"&proc={color}"
 
     # remove the existing layers with planet attribution
     for layer in m.layers:
         if layer.attribution == planet.attribution:
             m.remove_layer(layer)
+
+    # use the visual basmap if available
+    if ANALYTIC.match(mosaic_name) and not color_option:
+        mosaic_name = mosaic_name.replace("normalized_analytic", "visual")
 
     # create a new Tile layer on the map
     layer = TileLayer(
