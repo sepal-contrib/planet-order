@@ -12,14 +12,14 @@ from component import parameter as cp
 
 class DownMap(sm.SepalMap, HasTraits):
 
-    combo = Any("").tag(sync=True)
+    combo = Any(cp.planet_colors[0]).tag(sync=True)
 
     def __init__(self):
 
         # create the extra widget
         self.state = sw.StateBar(loading=False)
         self.color = v.ListItemGroup(
-            v_model=None,
+            v_model=cp.planet_colors[0],
             children=[v.ListItem(children=[c], value=c) for c in cp.planet_colors[:4]],
         )
         self.palette = v.Menu(
