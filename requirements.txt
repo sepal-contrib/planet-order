@@ -23,3 +23,4 @@ numpy==1.17.4
 requests==2.22.0
 Shapely==1.8.0
 traitlets==5.1.1
+cryptography>=2.1.4
