@@ -3,9 +3,8 @@ Planet order
 
 This dasboard application based on the `sepal-ui <https://sepal-ui.readthedocs.io/en/latest/>`_ framework, provide the user with a friendly interface to explore and download Planet Labs images.
 
-.. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/demo.gif
-
-    demo of the app
+.. thumbnail:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/demo.gif
+    :group: planet-order
     
 .. warning::
 
@@ -15,18 +14,21 @@ In the landing page of our module at the bottom of the rigth drawer, You'll find
 
 -   The :code source: will open in a new tab the GitHub repository that is used to create this module. our code is open-source and distributed under the MIT License.
     
-    .. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/code_source.png
+    .. thumbnail:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/code_source.png
         :width: 17%
+        :group: planet-order
 
 -   The :wiki: button will lead you to this page
 
-    .. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/wiki.png
+    .. thumbnail:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/wiki.png
         :width: 17%
+        :group: planet-order
         
 -   The :bug report: will open in a new tab the isse tracker of our GitHub repository. You can write here if you experience bugs or if you have any feature request. Our maintainer will answer as fast as possible.
 
-    .. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/bug_report.png
+    .. thumbnail:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/bug_report.png
         :width: 17%
+        :group: planet-order
     
 Select an AOI
 -------------
@@ -35,10 +37,9 @@ The application use the same AOI selector that you will find in lots of other ap
 
 In this application multiple selection methods are available by selecting options in the first dropdown menu:
 
-.. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/method.png
+.. thumbnail:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/method.png
     :width: 50%
-
-    selection methods
+    :group: planet-order
     
 Administrative
 ^^^^^^^^^^^^^^
@@ -67,9 +68,8 @@ To use the module you'll need the Planet Lab API key associated to you Planet la
 Move to the :code:`retreive images` page by clicking on the button in the drawer. 
 There, you'll find an empty map and several field that you need to fill.
 
-.. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/retreive_landing.png
-
-    retreive landing
+.. thumbnail:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/retreive_landing.png
+    :group: planet-order
     
 Provide your API key and click on :code:`check API key`. The tool will verify the validity of your API key. If this step is successful the list of all the mosaics available through your Planet account will be displayed in the planet mosaic dropdown and the mosaic selector system will be unabled.
 
@@ -81,9 +81,8 @@ Provide your API key and click on :code:`check API key`. The tool will verify th
 
     Don't show you're API key when you are sharing your screen with others
     
-.. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/retreive_activate.png
-
-    retreive activated
+.. thumbnail:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/retreive_activate.png
+    :group: planet-order
 
 
 Select Mosaic
@@ -93,9 +92,8 @@ Now you can select any mosaic in the mosaic dropdown on top of the map. using th
 
 Once a mosaic is selected the tool will zoom on your AOI and display it in blue. It will add the Planet Lab grid cells (in gold) that are touching the AOI. Each cell of the grid represents 1 image to download. 
 
-.. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/mosaic_select_rgb.png
-
-    download activated
+.. thumbnail:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/mosaic_select_rgb.png
+    :group: planet-order
 
 Click on the palette btn on the top-left side of the map. This button will expand and show the 4 different color combo available:  
 
@@ -104,13 +102,11 @@ Click on the palette btn on the top-left side of the map. This button will expan
 -   **cir** (nir, red, green)
 -   **ndvi** a viridis representation of the ndvi index ((nir-red)/(nir+red)) see `wikipedia <https://en.wikipedia.org/wiki/Normalized_difference_vegetation_index>`_
 
-.. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/mosaic_select_cir.png
-    
-    cir
+.. thumbnail:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/mosaic_select_cir.png
+    :group: planet-order
 
-.. figure:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/mosaic_select_ndvi.png
-
-    ndvi
+.. thumbnail:: https://raw.githubusercontent.com/12rambau/planet-order/master/doc/img/mosaic_select_ndvi.png
+    :group: planet-order
 
 Download Data
 -------------
