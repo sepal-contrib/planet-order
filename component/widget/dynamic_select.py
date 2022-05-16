@@ -51,25 +51,27 @@ class DynamicSelect(v.Layout):
         """go to the next value. loop to the first or last one if we reach the end"""
 
         increm = widget._metadata["increm"]
+        
+        # create a sanitized version of the item list without the header
+        items = [i["value"] for i in self.select.items if "header" not in i]
 
         # get the current position in the list
         val = self.select.v_model
-        if val in self.select.items:
-            pos = self.select.items.index(val)
-
+        if val in items:
+            pos = items.index(val)
             pos += increm
 
             # check if loop is required
             if pos == -1:
-                pos = len(self.select.items) - 1
-            elif pos >= len(self.select.items):
+                pos = len(items) - 1
+            elif pos >= len(items):
                 pos = 0
 
         # if none was selected always start by the first
         else:
             pos = 0
 
-        self.select.v_model = self.select.items[pos]
+        self.select.v_model = items[pos]
 
         return self
 
