@@ -144,8 +144,6 @@ def order_basemaps(key, out):
 
     out.add_msg(cm.planet.mosaic.complete, "success")
 
-    print(mosaics)
-
     return res
 
 
