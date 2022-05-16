@@ -35,7 +35,7 @@ class DownMap(sm.SepalMap, HasTraits):
                         outlined=True,
                         v_on="menu.on",
                         color="primary",
-                        #icon=True,
+                        # icon=True,
                         children=[v.Icon(children=["mdi-palette"])],
                     ),
                 }

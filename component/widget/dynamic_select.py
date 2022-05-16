@@ -51,7 +51,7 @@ class DynamicSelect(v.Layout):
         """go to the next value. loop to the first or last one if we reach the end"""
 
         increm = widget._metadata["increm"]
-        
+
         # create a sanitized version of the item list without the header
         items = [i["value"] for i in self.select.items if "header" not in i]
 
