@@ -23,16 +23,19 @@ class DownMap(sm.SepalMap, HasTraits):
             children=[v.ListItem(children=[c], value=c) for c in cp.planet_colors[:4]],
         )
         self.palette = v.Menu(
+            offset_x=True,
             value=False,
             v_slots=[
                 {
                     "name": "activator",
                     "variable": "menu",
                     "children": v.Btn(
+                        style_="min-width: 0px; padding-left: .5em; padding-right: .5em",
                         v_model=False,
+                        outlined=True,
                         v_on="menu.on",
                         color="primary",
-                        icon=True,
+                        #icon=True,
                         children=[v.Icon(children=["mdi-palette"])],
                     ),
                 }
