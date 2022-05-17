@@ -2,11 +2,15 @@ from sepal_ui import sepalwidgets as sw
 from sepal_ui import color as sc
 import ipyvuetify as v
 from ipywidgets import jslink
+from traitlets import Bool
 
 from component.message import cm
 
 
 class DynamicSelect(v.Layout):
+
+    disabled = Bool(True).tag(sync=True)
+
     def __init__(self):
 
         self.prev = v.Btn(
@@ -39,6 +43,9 @@ class DynamicSelect(v.Layout):
         jslink((self, "v_model"), (self.select, "v_model"))
         self.prev.on_event("click", self._on_click)
         self.next.on_event("click", self._on_click)
+        jslink((self, "disabled"), (self.prev, "disabled"))
+        jslink((self, "disabled"), (self.next, "disabled"))
+        jslink((self, "disabled"), (self.select, "disabled"))
 
     def set_items(self, items):
         """Change the value of the items of the select"""
@@ -52,39 +59,25 @@ class DynamicSelect(v.Layout):
 
         increm = widget._metadata["increm"]
 
+        # create a sanitized version of the item list without the header
+        items = [i["value"] for i in self.select.items if "header" not in i]
+
         # get the current position in the list
         val = self.select.v_model
-        if val in self.select.items:
-            pos = self.select.items.index(val)
-
+        if val in items:
+            pos = items.index(val)
             pos += increm
 
             # check if loop is required
             if pos == -1:
-                pos = len(self.select.items) - 1
-            elif pos >= len(self.select.items):
+                pos = len(items) - 1
+            elif pos >= len(items):
                 pos = 0
 
         # if none was selected always start by the first
         else:
             pos = 0
 
-        self.select.v_model = self.select.items[pos]
-
-        return self
-
-    def disable(self):
-
-        self.prev.disabled = True
-        self.next.disabled = True
-        self.select.disabled = True
-
-        return self
-
-    def unable(self):
-
-        self.prev.disabled = False
-        self.next.disabled = False
-        self.select.disabled = False
+        self.select.v_model = items[pos]
 
         return self

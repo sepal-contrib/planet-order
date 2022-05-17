@@ -22,6 +22,12 @@ def display_on_map(m, aoi_model, out):
 
     out.add_msg(cm.map.aoi, loading=True)
 
+    # clear the map
+    for l in m.layers:
+        if l.name not in ["CartoDB.DarkMatter", "CartoDB.Positron"]:
+            m.remove_layer(l)
+
+    # load the aoi
     aoi = aoi_model.get_ipygeojson()
     aoi.style = {
         "stroke": True,
@@ -33,9 +39,9 @@ def display_on_map(m, aoi_model, out):
     aoi.name = "aoi"
     aoi.attribution = sepal_attribution
 
-    # remove any existing layer with the same name
-
     m.add_layer(aoi)
+
+    out.add_msg(cm.map.done, loading=False)
 
     return
 
