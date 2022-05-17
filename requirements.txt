@@ -8,7 +8,7 @@ pre-commit
 # if you require GDAL and or pyproj in your module please uncomment these lines
 # there are set up to be inlined with SEPAL implementation of GDAL and PROJ version
 pygdal==3.4.0.10
-pyproj=3.0.0
+pyproj==3.0.0
 
 # the base lib to run any sepal_ui based app 
 # don't forget to fix it to a specific version when you're app is ready

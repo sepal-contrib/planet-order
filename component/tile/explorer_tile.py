@@ -2,7 +2,7 @@ import ipyvuetify as v
 
 from sepal_ui import sepalwidgets as sw
 from sepal_ui import mapping as sm
-from sepal_ui.scripts.utils import loading_button
+from sepal_ui.scripts import utils as su
 
 from component import widget as cw
 from component import scripts as cs
@@ -15,8 +15,6 @@ class ExplorerTile(sw.Tile):
         # gather the io
         self.aoi_model = aoi_model
 
-        self.mapped = False  # to set if the map have already been zoomed on a specific region or not
-
         # create the widgets
         self.api_key = cw.CustomPassword()
         self.check_key = sw.Btn(cm.planet.btn.check, block=True)
@@ -24,7 +22,7 @@ class ExplorerTile(sw.Tile):
             cm.planet.btn.download, block=True, disabled=True, class_="mt-5"
         ).hide()
         self.api_alert = sw.Alert()
-        self.select = cw.DynamicSelect().disable()
+        self.select = cw.DynamicSelect()
         self.m = cw.DownMap()
 
         # create a layout
@@ -51,10 +49,10 @@ class ExplorerTile(sw.Tile):
         super().__init__("explorer_tile", cm.planet.title, inputs=[layout])
 
         # decorate the functions
-        self._get_mosaic = loading_button(
+        self._get_mosaic = su.loading_button(
             button=self.check_key, alert=self.api_alert, debug=True
         )(self._get_mosaic)
-        self._download = loading_button(
+        self._download = su.loading_button(
             button=self.down_quads, alert=self.api_alert, debug=True
         )(self._download)
 
@@ -63,6 +61,25 @@ class ExplorerTile(sw.Tile):
         self.select.observe(self._on_mosaic_select, "v_model")
         self.down_quads.on_event("click", self._download)
         self.m.observe(self._on_combo_change, "combo")
+        self.aoi_model.observe(self._update_aoi, "name")
+
+    def _update_aoi(self, change):
+        """update the aoi when it's changed in the aoi_selector"""
+
+        if change["new"] is None:
+            return
+
+        # add the aoi and center the map on it
+        cs.display_on_map(self.m, self.aoi_model, self.m.state)
+        self.m.zoom_bounds(self.aoi_model.total_bounds())
+
+        # reset the mosaic selection if needed
+        self.select.select.v_model = None
+
+        # disabled the quad download as well
+        self.down_quads.disabled = True
+
+        return
 
     def _on_combo_change(self, change):
         """update the mosaic if the planet key is available"""
@@ -84,31 +101,22 @@ class ExplorerTile(sw.Tile):
         self.select.set_items(items)
         self.down_quads.show()
 
-        self.select.unable()
+        self.select.disabled = False  # unable()
 
         return self
 
+    @su.switch("disabled", on_widgets=["select"])
     def _on_mosaic_select(self, change):
         """load the mosaics on the map and release the download btn"""
 
-        ds = change["owner"]
+        if change["new"] is None:
+            return
 
         # block all the btn
-        ds.disable()
+        # self.select.disable()
 
         # unable the btn
-        if change["new"]:
-            self.down_quads.disabled = False
-
-        # update the map
-        if not self.mapped:
-            self.m.zoom_bounds(self.aoi_model.total_bounds())
-
-            # unsure that this operation is only carried out once
-            self.mapped = True
-
-        # add the aoi and center the map on it
-        cs.display_on_map(self.m, self.aoi_model, self.m.state)
+        self.down_quads.disabled = False
 
         # add the grid
         self.grid = cs.set_grid(self.aoi_model, self.m, self.m.state)
@@ -120,9 +128,9 @@ class ExplorerTile(sw.Tile):
         self.m.state.add_msg(cm.map.done, loading=False)
 
         # release the btn
-        ds.unable()
+        # self.select.unable()
 
-        return self
+        return
 
     def _download(self, widget, event, data):
         """download the selected quads using the selected mosaic"""
