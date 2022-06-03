@@ -100,6 +100,19 @@ def validate_key(key, out):
     return
 
 
+def list_mosaics(client):
+    """list all the mosaic items from a client"""
+    mosaics = client.get_mosaics()
+    while True:
+        for item in mosaics.get()["mosaics"]:
+            yield item
+        mosaics = mosaics.next()
+        if mosaics is None:
+            break
+
+    return
+
+
 def order_basemaps(key, out):
     """check the apy key and then order the basemap to update the select list"""
 
@@ -112,27 +125,19 @@ def order_basemaps(key, out):
     planet.client = api.ClientV1(api_key=planet.key)
 
     # get the basemap names
-    # to use when PLanet decide to update it's API, until then I manually retreive the mosaics
-    # mosaics = planet.client.get_mosaics().get()['mosaics']
-    url = planet.client._url("basemaps/v1/mosaics")
-    mosaics = (
-        planet.client._get(url, api.models.Mosaics, params={"_page_size": 1000})
-        .get_body()
-        .get()["mosaics"]
-    )
+    mosaics = [m["name"] for m in list_mosaics(planet.client)]
 
     # filter the mosaics in 3 groups
     bianual, monthly, other, res = [], [], [], []
     for m in mosaics:
-        name = m["name"]
-        type_, short = mosaic_name(name)
+        type_, short = mosaic_name(m)
 
         if type_ == "ANALYTIC_MONTHLY":
-            monthly.append({"text": short, "value": name})
+            monthly.append({"text": short, "value": m})
         elif type_ == "ANALYTIC_BIANUAL":
-            bianual.append({"text": short, "value": name})
+            bianual.append({"text": short, "value": m})
         elif type_ == "OTHER":
-            monthly.append({"text": short, "value": name})
+            monthly.append({"text": short, "value": m})
 
     # fill the results with the found mosaics
     if len(bianual):
