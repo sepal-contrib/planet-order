@@ -34,7 +34,6 @@ class ExplorerTile(sw.Tile):
                     xs3=True,
                     class_="ma-2",
                     children=[
-                        v.Divider(class_="mb-3"),
                         self.api_key,
                         self.check_key,
                         self.down_quads,
