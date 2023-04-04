@@ -1,3 +1,5 @@
+"""An API key cstom winput widget."""
+
 from sepal_ui import sepalwidgets as sw
 
 from component import parameter as cp
@@ -6,7 +8,7 @@ from component.message import cm
 
 class CustomPassword(sw.PasswordField):
     def __init__(self):
-
+        """A custom password to digest a default key."""
         self.default_key = cp.default_planet_key
 
         super().__init__(
@@ -16,8 +18,7 @@ class CustomPassword(sw.PasswordField):
         self.observe(self._check_default, "v_model")
 
     def _toggle_pwd(self, widget, event, data):
-        """only authorize the visibility toogle if the password is different than the default key"""
-
+        """only authorize the visibility toogle if the password is different than the default key."""
         # clean the error_message attribute
         self.error_messages = None
 
@@ -30,8 +31,7 @@ class CustomPassword(sw.PasswordField):
         return self
 
     def _check_default(self, change):
-        """automatically hide the key if the user write the default one"""
-
+        """Automatically hide the key if the user write the default one."""
         self.error_messages = None
 
         if self.default_key and self.v_model == self.default_key:

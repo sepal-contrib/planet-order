@@ -9,22 +9,22 @@ This dasboard application based on the [sepal-ui](https://sepal-ui.readthedocs.i
 
 More information on usage can be found in the [doc](https://docs.sepal.io/en/latest/modules/dwn/planet_order.html)
 
-
 ## Contribute
 
-first download the repository to your own sepal account 
+first download the repository to your own sepal account
 
 ```
 git clone https://github.com/12rambau/planet-order.git
 ```
 
-In the `planet-order` folder, copy paste the `planet.key.dist` file and remove the `.dist` extention 
+In the `planet-order` folder, copy paste the `planet.key.dist` file and remove the `.dist` extention
 
 ```
 cp planet.key.dist planet.key
 ```
 
-You'll need to change the values of the parameters according to your needs. 
+You'll need to change the values of the parameters according to your needs.
+
 - **ThisIsNotAKey**: Your personal key to access the planet API
 
 > :warning: The key that leaves in the `planet.key` file is used as the default key of the module. You can skip this step and use the key TextField to use your personnal.

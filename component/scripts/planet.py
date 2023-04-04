@@ -1,16 +1,16 @@
-# this file will be used as a singleton object in the explorer tile
+"""this file will be used as a singleton object in the explorer tile."""
 
-import time
-import requests
-from types import SimpleNamespace
 import re
+import time
 from datetime import datetime
+from types import SimpleNamespace
 
-from planet import api
+import requests
 from ipyleaflet import TileLayer
+from planet import api
 
-from component.message import cm
 from component import parameter as cp
+from component.message import cm
 
 planet = SimpleNamespace()
 
@@ -29,22 +29,21 @@ planet.client = None
 VISUAL = re.compile("^planet_medres_visual_")  # will be removed from the selection
 ANALYTIC = re.compile("^planet_medres_normalized_analytic_")
 ANALYTIC_MONTHLY = re.compile(
-    "^planet_medres_normalized_analytic_\d{4}-\d{2}_mosaic$"
+    "^planet_medres_normalized_analytic_\\d{4}-\\d{2}_mosaic$"
 )  # NICFI monthly
 ANALYTIC_BIANUAL = re.compile(
-    "^planet_medres_normalized_analytic_\d{4}-\d{2}_\d{4}-\d{2}_mosaic$"
+    "^planet_medres_normalized_analytic_\\d{4}-\\d{2}_\\d{4}-\\d{2}_mosaic$"
 )  # NICFI bianual
 
 
 def mosaic_name(mosaic):
-    """
-    Give back the shorten name of the mosaic so that it can be displayed on the thumbnails
+    """Give back the shorten name of the mosaic so that it can be displayed on the thumbnails.
+
     Args:
         mosaic (str): the mosaic full name
     Return:
-        (str, str): the type and the shorten name of the mosaic
+        (str, str): the type and the shorten name of the mosaic.
     """
-
     if ANALYTIC_MONTHLY.match(mosaic):
         year = mosaic[34:38]
         start = datetime.strptime(mosaic[39:41], "%m").strftime("%b")
@@ -67,8 +66,7 @@ def mosaic_name(mosaic):
 
 
 def check_key():
-    """raise an error if the key is not validataed"""
-
+    """Raise an error if the key is not validataed."""
     if not planet.valid:
         raise Exception(cm.planet.key.invalid)
 
@@ -76,8 +74,7 @@ def check_key():
 
 
 def validate_key(key, out):
-    """Validate the API key and save it the key variable"""
-
+    """Validate the API key and save it the key variable."""
     out.add_msg(cm.planet.key.test)
 
     # get all the subscriptions
@@ -101,7 +98,7 @@ def validate_key(key, out):
 
 
 def list_mosaics(client):
-    """list all the mosaic items from a client"""
+    """List all the mosaic items from a client."""
     mosaics = client.get_mosaics()
     while True:
         for item in mosaics.get()["mosaics"]:
@@ -114,8 +111,7 @@ def list_mosaics(client):
 
 
 def order_basemaps(key, out):
-    """check the apy key and then order the basemap to update the select list"""
-
+    """Check the apy key and then order the basemap to update the select list."""
     # checking the key validity
     validate_key(key, out)
 
@@ -153,8 +149,7 @@ def order_basemaps(key, out):
 
 
 def display_basemap(mosaic_name, m, out, color):
-    """display the planet mosaic basemap on the map"""
-
+    """Display the planet mosaic basemap on the map."""
     out.add_msg(cm.map.tiles, loading=True)
 
     # set the color if necessary
@@ -189,8 +184,7 @@ def display_basemap(mosaic_name, m, out, color):
 
 
 def download_quads(aoi_name, mosaic_name, grid, out):
-    """export each quad to the appropriate folder"""
-
+    """Export each quad to the appropriate folder."""
     # a bool_variable to trigger a specifi error message when the mosaic cannot be downloaded
     view_only = False
 
@@ -225,7 +219,7 @@ def download_quads(aoi_name, mosaic_name, grid, out):
         # catch error relative of quad existence
         try:
             quad = planet.client.get_quad_by_id(mosaic, quad_id).get()
-        except Exception as e:
+        except Exception:
             out.append_msg(cm.planet.down.not_found.format(quad_id))
             fail += 1
             time.sleep(0.3)
@@ -238,7 +232,7 @@ def download_quads(aoi_name, mosaic_name, grid, out):
         # specific loop (yes it's ugly) to catch people that didn't use a key allowed to download the asked tiles
         try:
             planet.client.download_quad(quad).get_body().write(file)
-        except Exception as e:
+        except Exception:
             out.append_msg(cm.planet.down.no_access)
             fail += 1
             view_only = True

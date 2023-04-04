@@ -1,17 +1,17 @@
-import ipyvuetify as v
+"""The explorer tile."""
 
+import ipyvuetify as v
 from sepal_ui import sepalwidgets as sw
-from sepal_ui import mapping as sm
 from sepal_ui.scripts import utils as su
 
-from component import widget as cw
 from component import scripts as cs
+from component import widget as cw
 from component.message import cm
 
 
 class ExplorerTile(sw.Tile):
     def __init__(self, aoi_model):
-
+        """The explorer tile."""
         # gather the io
         self.aoi_model = aoi_model
 
@@ -63,8 +63,7 @@ class ExplorerTile(sw.Tile):
         self.aoi_model.observe(self._update_aoi, "name")
 
     def _update_aoi(self, change):
-        """update the aoi when it's changed in the aoi_selector"""
-
+        """update the aoi when it's changed in the aoi_selector."""
         if change["new"] is None:
             return
 
@@ -81,8 +80,7 @@ class ExplorerTile(sw.Tile):
         return
 
     def _on_combo_change(self, change):
-        """update the mosaic if the planet key is available"""
-
+        """update the mosaic if the planet key is available."""
         if not (self.select.v_model and cs.planet.valid):
             return self
 
@@ -94,8 +92,7 @@ class ExplorerTile(sw.Tile):
         return self
 
     def _get_mosaic(self, widget, event, data):
-        """recover all the available mosaic with this specific key"""
-
+        """recover all the available mosaic with this specific key."""
         items = cs.order_basemaps(self.api_key.v_model, self.api_alert)
         self.select.set_items(items)
         self.down_quads.show()
@@ -106,8 +103,7 @@ class ExplorerTile(sw.Tile):
 
     @su.switch("disabled", on_widgets=["select"])
     def _on_mosaic_select(self, change):
-        """load the mosaics on the map and release the download btn"""
-
+        """load the mosaics on the map and release the download btn."""
         if change["new"] is None:
             return
 
@@ -132,8 +128,7 @@ class ExplorerTile(sw.Tile):
         return
 
     def _download(self, widget, event, data):
-        """download the selected quads using the selected mosaic"""
-
+        """download the selected quads using the selected mosaic."""
         cs.download_quads(
             self.aoi_model.name, self.select.v_model, self.grid, self.api_alert
         )

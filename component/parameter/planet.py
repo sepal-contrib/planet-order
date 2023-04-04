@@ -1,3 +1,5 @@
+"""Planet related parameters."""
+
 from pathlib import Path
 
 default_planet_key = None

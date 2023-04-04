@@ -1,7 +1,8 @@
-from sepal_ui import sepalwidgets as sw
-from sepal_ui import color as sc
+"""A dynmic select to get the wanted mosaic."""
+
 import ipyvuetify as v
 from ipywidgets import jslink
+from sepal_ui import color as sc
 from traitlets import Bool
 
 from component.message import cm
@@ -12,7 +13,7 @@ class DynamicSelect(v.Layout):
     disabled = Bool(True).tag(sync=True)
 
     def __init__(self):
-
+        """A composite widget to select mosaic by name."""
         self.prev = v.Btn(
             _metadata={"increm": -1},
             x_small=True,
@@ -48,15 +49,13 @@ class DynamicSelect(v.Layout):
         jslink((self, "disabled"), (self.select, "disabled"))
 
     def set_items(self, items):
-        """Change the value of the items of the select"""
-
+        """Change the value of the items of the select."""
         self.select.items = items
 
         return self
 
     def _on_click(self, widget, event, data):
-        """go to the next value. loop to the first or last one if we reach the end"""
-
+        """go to the next value. loop to the first or last one if we reach the end."""
         increm = widget._metadata["increm"]
 
         # create a sanitized version of the item list without the header

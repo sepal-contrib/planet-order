@@ -1,54 +1,54 @@
 {
-    "app": {
-        "title": "Planet ordering module",
-        "drawer_item": {
-            "aoi": "AOI selection",
-            "retrieve": "Retrieve images",
-            "about": "About"
-        }
+  "app": {
+    "title": "Planet ordering module",
+    "drawer_item": {
+      "aoi": "AOI selection",
+      "retrieve": "Retrieve images",
+      "about": "About"
+    }
+  },
+  "key": {
+    "password": {
+      "label": "API key",
+      "error_msg": "You cannot expose the default API key"
+    }
+  },
+  "dynamic_select": {
+    "prev": "prev",
+    "next": "next",
+    "label": "Select mosaic"
+  },
+  "planet": {
+    "title": "Explore planet data",
+    "btn": {
+      "check": "Check API key",
+      "download": "Download images"
     },
     "key": {
-        "password": {
-            "label": "API key",
-            "error_msg": "You cannot expose the default API key"
-        }
+      "invalid": "The current key is invalid, please provide a valid Planet key",
+      "test": "We are currently checking your API key",
+      "valid": "Your key have been validated"
     },
-    "dynamic_select": {
-        "prev": "prev",
-        "next": "next",
-        "label": "Select mosaic"
+    "mosaic": {
+      "load": "We are retrieving the mosaics list",
+      "complete": "The list of mosaic is available in the Mosaic selector"
     },
-    "planet": {
-        "title": "Explore planet data",
-        "btn": {
-            "check": "Check API key",
-            "download": "Download images"
-        },
-        "key": {
-            "invalid": "The current key is invalid, please provide a valid Planet key",
-            "test": "We are currently checking your API key",
-            "valid": "Your key have been validated"
-        },
-        "mosaic": {
-            "load": "We are retrieving the mosaics list",
-            "complete": "The list of mosaic is available in the Mosaic selector"
-        },
-        "down": {
-            "start": "exporting planet tiles",
-            "progress": "Images downloaded to Sepal",
-            "not_found": "Image {} not found",
-            "done": "Image {} downloaded to SEPAL",
-            "end": "Out of {} requested images, {} have been downloaded, {} skipped and {} failed",
-            "exist": "The image {} already exist in your sepal directory, aborting",
-            "no_access": "You don't have the right access to download this resource",
-            "view_only": "At least one of the missing tile was not downloaded because you don't have the right access to download the resources. Please see the module documentation or your Planet Lab profile to check their availability."
-        }
-    },
-    "map": {
-        "aoi": "loading aoi",
-        "grid": "generating planet grid",
-        "tiles": "loading tiles",
-        "done": "loading complete",
-        "aoi_border": "AOI border"
+    "down": {
+      "start": "exporting planet tiles",
+      "progress": "Images downloaded to Sepal",
+      "not_found": "Image {} not found",
+      "done": "Image {} downloaded to SEPAL",
+      "end": "Out of {} requested images, {} have been downloaded, {} skipped and {} failed",
+      "exist": "The image {} already exist in your sepal directory, aborting",
+      "no_access": "You don't have the right access to download this resource",
+      "view_only": "At least one of the missing tile was not downloaded because you don't have the right access to download the resources. Please see the module documentation or your Planet Lab profile to check their availability."
     }
+  },
+  "map": {
+    "aoi": "loading aoi",
+    "grid": "generating planet grid",
+    "tiles": "loading tiles",
+    "done": "loading complete",
+    "aoi_border": "AOI border"
+  }
 }

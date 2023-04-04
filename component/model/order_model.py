@@ -1,3 +1,5 @@
+"""Model to order basemaps to NICFI."""
+
 from sepal_ui import model
 from traitlets import Any
 

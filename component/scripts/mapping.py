@@ -1,15 +1,16 @@
-import json
+"""Methods to interact with the map."""
+
 from itertools import product
 
-from shapely import geometry as sg
-from shapely.ops import unary_union
 import geopandas as gpd
-import ipyvuetify as v
-import geemap
 import numpy as np
-from pyproj import CRS, Transformer
-from sepal_ui import color as sc
 from ipyleaflet import GeoJSON
+from pyproj import CRS, Transformer
+from sepal_ui import aoi
+from sepal_ui import color as sc
+from sepal_ui import mapping as sm
+from sepal_ui import sepalwidgets as sw
+from shapely import geometry as sg
 
 from component import parameter as cp
 from component.message import cm
@@ -17,15 +18,14 @@ from component.message import cm
 sepal_attribution = "SEPAL©"
 
 
-def display_on_map(m, aoi_model, out):
-    """display the aoi on the map"""
-
+def display_on_map(m: sm.SepalMap, aoi_model: aoi.AoiModel, out: sw.Alert) -> None:
+    """Display the aoi on the map."""
     out.add_msg(cm.map.aoi, loading=True)
 
     # clear the map
-    for l in m.layers:
-        if l.name not in ["CartoDB.DarkMatter", "CartoDB.Positron"]:
-            m.remove_layer(l)
+    for ly in m.layers:
+        if ly.name not in ["CartoDB.DarkMatter", "CartoDB.Positron"]:
+            m.remove_layer(ly)
 
     # load the aoi
     aoi = aoi_model.get_ipygeojson()
@@ -46,9 +46,10 @@ def display_on_map(m, aoi_model, out):
     return
 
 
-def set_grid(aoi_model, m, out):
-    """create a grid adapted to the aoi and to the planet initial grid"""
-
+def set_grid(
+    aoi_model: aoi.AoiModel, m: sm.SepalMap, out: sw.Alert
+) -> gpd.GeoDataFrame:
+    """Create a grid adapted to the aoi and to the planet initial grid."""
     out.add_msg(cm.map.grid, loading=True)
 
     # check the grid filename
@@ -66,10 +67,10 @@ def set_grid(aoi_model, m, out):
         aoi_gdf = aoi_model.gdf.to_crs("EPSG:3857")
 
         # retreive the bb
-        aoi_bb = sg.box(*aoi_gdf.total_bounds)
+        sg.box(*aoi_gdf.total_bounds)
 
         # compute the longitude and latitude in the apropriate CRS
-        crs_4326 = CRS.from_epsg(4326)
+        CRS.from_epsg(4326)
         crs_3857 = CRS.from_epsg(3857)
         crs_bounds = crs_3857.area_of_use.bounds
 

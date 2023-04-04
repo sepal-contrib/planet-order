@@ -1,12 +1,12 @@
-import ipyvuetify as v
+"""The download map custom widget."""
 
-from traitlets import HasTraits, Any
-from sepal_ui import mapping as sm
-from sepal_ui import sepalwidgets as sw
+import ipyvuetify as v
 from ipyleaflet import WidgetControl
 from ipywidgets import jslink
+from sepal_ui import mapping as sm
+from sepal_ui import sepalwidgets as sw
+from traitlets import Any, HasTraits
 
-from component.message import cm
 from component import parameter as cp
 
 
@@ -15,7 +15,7 @@ class DownMap(sm.SepalMap, HasTraits):
     combo = Any(cp.planet_colors[0]).tag(sync=True)
 
     def __init__(self):
-
+        """The download map custom map."""
         # create the extra widget
         self.state = sw.StateBar(loading=False)
         self.color = v.ListItemGroup(
