@@ -1,12 +1,8 @@
-#custom 
-parameters.py
-planet.key
-utils/planet_grid.geojson
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+*[Uu]ntitled*
 
 # C extensions
 *.so
