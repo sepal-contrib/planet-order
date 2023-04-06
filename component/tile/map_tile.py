@@ -1,11 +1,12 @@
 """The map displayed in the map application."""
 
 from ipyleaflet import WidgetControl
-from sepal_ui import aoi
+from sepal_ui import aoi, planetapi
 from sepal_ui import mapping as sm
 from sepal_ui import sepalwidgets as sw
 
 from .aoi_control import AoiControl
+from .planet_control import PlanetControl
 
 
 class MapTile(sw.Tile):
@@ -19,15 +20,18 @@ class MapTile(sw.Tile):
 
         # create the model here as it will be easier to share between controls
         aoi_model = aoi.AoiModel(gee=False)
+        planet_model = planetapi.PlanetModel()
 
         # create the controls
         fullscreen_control = sm.FullScreenControl(
             self.m, True, True, position="topright"
         )
-        aoi_control = AoiControl(self.m, model=aoi_model)
+        aoi_control = AoiControl(self.m, aoi_model)
+        planet_control = PlanetControl(self.m, planet_model)
 
         # place them on the map
         self.m.add(fullscreen_control)
+        self.m.add(planet_control)
         self.m.add(aoi_control)
 
         # create the tile

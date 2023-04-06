@@ -18,7 +18,6 @@ class AoiControl(sm.MenuControl):
         }
         self.view = aoi.AoiView(map_=map_, map_style=style, model=model, gee=False)
         self.view.elevation = False
-        self.view.btn.color = "secondary"
         self.view.class_list.add("ma-5")
 
         # create the control
