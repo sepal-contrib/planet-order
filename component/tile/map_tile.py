@@ -1,8 +1,11 @@
 """The map displayed in the map application."""
 
 from ipyleaflet import WidgetControl
+from sepal_ui import aoi
 from sepal_ui import mapping as sm
 from sepal_ui import sepalwidgets as sw
+
+from .aoi_control import AoiControl
 
 
 class MapTile(sw.Tile):
@@ -13,11 +16,19 @@ class MapTile(sw.Tile):
         """
         # create a map
         self.m = sm.SepalMap(zoom=3)  # to be visible on 4k screens
-        self.m.add_control(
-            sm.FullScreenControl(
-                self.m, fullscreen=True, fullapp=True, position="topright"
-            )
+
+        # create the model here as it will be easier to share between controls
+        aoi_model = aoi.AoiModel(gee=False)
+
+        # create the controls
+        fullscreen_control = sm.FullScreenControl(
+            self.m, True, True, position="topright"
         )
+        aoi_control = AoiControl(self.m, model=aoi_model)
+
+        # place them on the map
+        self.m.add(fullscreen_control)
+        self.m.add(aoi_control)
 
         # create the tile
         super().__init__("map_tile", "", [self.m])
