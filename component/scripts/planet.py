@@ -3,20 +3,14 @@
 import re
 import time
 from datetime import datetime
-from types import SimpleNamespace
 
-from ipyleaflet import TileLayer
 from sepal_ui.planetapi import PlanetModel
 
+from component import model as cmod
 from component import parameter as cp
 from component.message import cm
 
-planet = SimpleNamespace()
-
-# parameters
-planet.url = "https://api.planet.com/auth/v1/experimental/public/my/subscriptions"
-planet.basemaps = "https://tiles.planet.com/basemaps/v1/planet-tiles/{mosaic_name}/gmap/{{z}}/{{x}}/{{y}}.png?api_key={key}"
-planet.attribution = "Imagery © Planet Labs Inc."
+planet = "toto"
 
 # create the regex to match the different know planet datasets
 VISUAL = re.compile("^planet_medres_visual_")  # will be removed from the selection
@@ -87,51 +81,15 @@ def order_basemaps(mosaics: dict) -> list[dict[str, str]]:
     return res
 
 
-def get_url(planet_model: PlanetModel, mosaic_name: str, color="visual") -> str:
+def get_url(planet_model: PlanetModel, order_model: cmod.OrderModel) -> str:
     """retreive a fully defined mosaic url"""
 
-    # set the color if necessary
-    color_option = "" if color == "visual" else f"&proc={color}"
+    color = f"&proc={order_model.color}"
 
     mosaics = planet_model.get_mosaics()
-    url = next(m["_links"]["tiles"] for m in mosaics if m["name"] == mosaic_name)
+    url = next(m["_links"]["tiles"] for m in mosaics if m["name"] == order_model.mosaic)
 
-    return url + color_option
-
-
-def display_basemap(mosaic_name, m, out, color):
-    """Display the planet mosaic basemap on the map."""
-    out.add_msg(cm.map.tiles, loading=True)
-
-    # set the color if necessary
-    color_option = "" if color == "visual" else f"&proc={color}"
-
-    # remove the existing layers with planet attribution
-    for layer in m.layers:
-        if layer.attribution == planet.attribution:
-            m.remove_layer(layer)
-
-    # use the visual basmap if available
-    if ANALYTIC.match(mosaic_name) and not color_option:
-        mosaic_name = mosaic_name.replace("normalized_analytic", "visual")
-
-    # create a new Tile layer on the map
-    layer = TileLayer(
-        url=planet.basemaps.format(key=planet.key, mosaic_name=mosaic_name)
-        + color_option,
-        name="Planet© Mosaic",
-        attribution=planet.attribution,
-        show_loading=True,
-    )
-
-    # insert the mosaic bewteen CardoDB and the country border ie position 1
-    # we have already removed the planet layers so I'm sure that nothing is in
-    # The grid and the country are build before and if we are here I'm also sure that there are 3 layers in the map
-    tmp_layers = list(m.layers)
-    tmp_layers.insert(1, layer)
-    m.layers = tuple(tmp_layers)
-
-    return
+    return url + color
 
 
 def download_quads(aoi_name, mosaic_name, grid, out):

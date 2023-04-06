@@ -12,7 +12,6 @@ if planet_key_file.is_file():
         default_planet_key = f.read().strip()
 
 planet_colors = [
-    "visual",
     "rgb",
     "cir",
     "ndvi",

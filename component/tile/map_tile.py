@@ -9,6 +9,7 @@ from component import model as cmod
 from component import scripts as cs
 
 from .aoi_control import AoiControl
+from .color_control import ColorControl
 from .order_control import OrderControl
 from .planet_control import PlanetControl
 
@@ -36,18 +37,21 @@ class MapTile(sw.Tile):
         order_control = OrderControl(
             self.m, self.order_model, self.planet_model, position="topleft"
         )
+        color_control = ColorControl(self.m, self.order_model, position="topleft")
 
         # place them on the map
         self.m.add(fullscreen_control)
         self.m.add(planet_control)
         self.m.add(aoi_control)
         self.m.add(order_control)
+        self.m.add(color_control)
 
         # create the tile
         super().__init__("map_tile", "", [self.m])
 
         # add js behaviour
         self.order_model.observe(self.display_mosaic, "mosaic")
+        self.order_model.observe(self.display_mosaic, "color")
 
     def display_mosaic(self, *args) -> None:
         """display the mosaic when one of the parameter is changed"""
@@ -57,7 +61,7 @@ class MapTile(sw.Tile):
 
         # create a new Tile layer on the map
         layer = TileLayer(
-            url=cs.get_url(self.planet_model, self.order_model.mosaic, "visual"),
+            url=cs.get_url(self.planet_model, self.order_model),
             name="Planet© Mosaic",
             attribution="Imagery © Planet Labs Inc.",
             show_loading=True,
