@@ -9,4 +9,4 @@ sepal-ui
 
 # custom libs
 geopandas
-planet==1.4.9
+planet==2.0a6

@@ -5,4 +5,4 @@ In a big module with lot of custom tiles, it can make sense to split things in s
 If you use a module import all the functions here to only have 1 call to make.
 """
 
-from .explorer_tile import *
+from .map_tile import *
