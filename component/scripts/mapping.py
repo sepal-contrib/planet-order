@@ -18,34 +18,6 @@ from component.message import cm
 sepal_attribution = "SEPAL©"
 
 
-def display_on_map(m: sm.SepalMap, aoi_model: aoi.AoiModel, out: sw.Alert) -> None:
-    """Display the aoi on the map."""
-    out.add_msg(cm.map.aoi, loading=True)
-
-    # clear the map
-    for ly in m.layers:
-        if ly.name not in ["CartoDB.DarkMatter", "CartoDB.Positron"]:
-            m.remove_layer(ly)
-
-    # load the aoi
-    aoi = aoi_model.get_ipygeojson()
-    aoi.style = {
-        "stroke": True,
-        "color": sc.info,
-        "weight": 2,
-        "opacity": 1,
-        "fill": False,
-    }
-    aoi.name = "aoi"
-    aoi.attribution = sepal_attribution
-
-    m.add_layer(aoi)
-
-    out.add_msg(cm.map.done, loading=False)
-
-    return
-
-
 def set_grid(
     aoi_model: aoi.AoiModel, m: sm.SepalMap, out: sw.Alert
 ) -> gpd.GeoDataFrame:

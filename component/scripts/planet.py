@@ -5,9 +5,8 @@ import time
 from datetime import datetime
 from types import SimpleNamespace
 
-import requests
 from ipyleaflet import TileLayer
-from planet import api
+from sepal_ui.planetapi import PlanetModel
 
 from component import parameter as cp
 from component.message import cm
@@ -18,12 +17,6 @@ planet = SimpleNamespace()
 planet.url = "https://api.planet.com/auth/v1/experimental/public/my/subscriptions"
 planet.basemaps = "https://tiles.planet.com/basemaps/v1/planet-tiles/{mosaic_name}/gmap/{{z}}/{{x}}/{{y}}.png?api_key={key}"
 planet.attribution = "Imagery © Planet Labs Inc."
-
-# attributes
-
-planet.valid = False
-planet.key = None
-planet.client = None
 
 # create the regex to match the different know planet datasets
 VISUAL = re.compile("^planet_medres_visual_")  # will be removed from the selection
@@ -36,7 +29,7 @@ ANALYTIC_BIANUAL = re.compile(
 )  # NICFI bianual
 
 
-def mosaic_name(mosaic):
+def mosaic_name(mosaic: str) -> tuple[str, str]:
     """Give back the shorten name of the mosaic so that it can be displayed on the thumbnails.
 
     Args:
@@ -65,67 +58,15 @@ def mosaic_name(mosaic):
     return type_, res
 
 
-def check_key():
-    """Raise an error if the key is not validataed."""
-    if not planet.valid:
-        raise Exception(cm.planet.key.invalid)
-
-    return
-
-
-def validate_key(key, out):
-    """Validate the API key and save it the key variable."""
-    out.add_msg(cm.planet.key.test)
-
-    # get all the subscriptions
-    resp = requests.get(planet.url, auth=(key, ""))
-    subs = resp.json()
-
-    # only continue if the resp was 200
-    if resp.status_code != 200:
-        raise Exception(subs["message"])
-
-    # check the subscription validity
-    # stop the execution if it's not the case
-    planet.valid = any([True for sub in subs if sub["state"] == "active"])
-    check_key()
-
-    planet.key = key
-
-    out.add_msg(cm.planet.key.valid, "success")
-
-    return
-
-
-def list_mosaics(client):
-    """List all the mosaic items from a client."""
-    mosaics = client.get_mosaics()
-    while True:
-        for item in mosaics.get()["mosaics"]:
-            yield item
-        mosaics = mosaics.next()
-        if mosaics is None:
-            break
-
-    return
-
-
-def order_basemaps(key, out):
-    """Check the apy key and then order the basemap to update the select list."""
-    # checking the key validity
-    validate_key(key, out)
-
-    out.add_msg(cm.planet.mosaic.load)
-
-    # autheticate to planet
-    planet.client = api.ClientV1(api_key=planet.key)
+def order_basemaps(mosaics: dict) -> list[dict[str, str]]:
+    """create a list of items for the dynamic selector"""
 
     # get the basemap names
-    mosaics = [m["name"] for m in list_mosaics(planet.client)]
+    mosaics_names = [m["name"] for m in mosaics]
 
     # filter the mosaics in 3 groups
     bianual, monthly, other, res = [], [], [], []
-    for m in mosaics:
+    for m in mosaics_names:
         type_, short = mosaic_name(m)
 
         if type_ == "ANALYTIC_MONTHLY":
@@ -143,9 +84,19 @@ def order_basemaps(key, out):
     if len(other):
         res += [{"header": "other"}] + other
 
-    out.add_msg(cm.planet.mosaic.complete, "success")
-
     return res
+
+
+def get_url(planet_model: PlanetModel, mosaic_name: str, color="visual") -> str:
+    """retreive a fully defined mosaic url"""
+
+    # set the color if necessary
+    color_option = "" if color == "visual" else f"&proc={color}"
+
+    mosaics = planet_model.get_mosaics()
+    url = next(m["_links"]["tiles"] for m in mosaics if m["name"] == mosaic_name)
+
+    return url + color_option
 
 
 def display_basemap(mosaic_name, m, out, color):

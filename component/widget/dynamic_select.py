@@ -18,7 +18,7 @@ class DynamicSelect(v.Layout):
             _metadata={"increm": -1},
             x_small=True,
             class_="ml-2 mr-2",
-            color=sc.secondary,
+            color=sc.primary,
             children=[v.Icon(children=["mdi-chevron-left"]), cm.dynamic_select.prev],
         )
 
@@ -26,14 +26,14 @@ class DynamicSelect(v.Layout):
             _metadata={"increm": 1},
             x_small=True,
             class_="ml-2 mr-2",
-            color=sc.secondary,
+            color=sc.primary,
             children=[cm.dynamic_select.next, v.Icon(children=["mdi-chevron-right"])],
         )
 
-        self.select = v.Select(dense=True, label=cm.dynamic_select.label, v_model=None)
+        self.select = v.Select(dense=True, label=cm.dynamic_select.label, v_model="")
 
         super().__init__(
-            v_model=None,
+            v_model="",
             align_center=True,
             row=True,
             class_="ma-1",
@@ -51,6 +51,7 @@ class DynamicSelect(v.Layout):
     def set_items(self, items):
         """Change the value of the items of the select."""
         self.select.items = items
+        self.disabled = False
 
         return self
 
