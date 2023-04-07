@@ -130,7 +130,6 @@ def download_quads(
         file = res_dir / f"{quad_id}.tif"
 
         if file.is_file():
-            alert.add_msg(cm.planet.down.exist.format(quad_id))
             skip += 1
             continue
 
@@ -138,11 +137,8 @@ def download_quads(
         try:
             quad = planet_model.get_quad(mosaic, quad_id)
         except Exception:
-            alert.append_msg(cm.planet.down.not_found.format(quad_id))
             fail += 1
             continue
-
-        alert.append_msg(cm.planet.down.done.format(quad_id))
 
         # download to file
         r = requests.get(quad["_links"]["download"])

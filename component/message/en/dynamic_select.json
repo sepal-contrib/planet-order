@@ -1,0 +1,7 @@
+{
+  "dynamic_select": {
+    "prev": "prev",
+    "next": "next",
+    "label": "Select mosaic"
+  }
+}
