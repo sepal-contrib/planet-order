@@ -15,11 +15,7 @@ class ColorControl(sm.MenuControl):
 
         # create the control
         super().__init__(
-            icon_content="fa-solid fa-palette",
-            card_content=self.view,
-            m=m,
-            group=1,
-            **kwargs
+            icon_content="fa-solid fa-palette", card_content=self.view, m=m, **kwargs
         )
         self.set_size(None, None, None, None)
 

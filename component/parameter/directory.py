@@ -22,7 +22,7 @@ def get_aoi_dir(aoi_name: str) -> Path:
 def get_mosaic_dir(aoi_name, mosaic_name):
     """Get the result dir associated with the mosaic name."""
     aoi_dir = get_aoi_dir(aoi_name)
-    mosaic_dir = aoi_dir.joinpath(mosaic_name)
+    mosaic_dir = aoi_dir / mosaic_name
     mosaic_dir.mkdir(exist_ok=True)
 
     return mosaic_dir

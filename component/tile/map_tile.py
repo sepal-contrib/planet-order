@@ -10,6 +10,7 @@ from component import scripts as cs
 
 from .aoi_control import AoiControl
 from .color_control import ColorControl
+from .down_control import DownControl
 from .order_control import OrderControl
 from .planet_control import PlanetControl
 
@@ -38,6 +39,13 @@ class MapTile(sw.Tile):
             self.m, self.order_model, self.planet_model, position="topleft"
         )
         color_control = ColorControl(self.m, self.order_model, position="topleft")
+        down_control = DownControl(
+            self.m,
+            self.aoi_model,
+            self.planet_model,
+            self.order_model,
+            position="topleft",
+        )
 
         # place them on the map
         self.m.add(fullscreen_control)
@@ -45,6 +53,7 @@ class MapTile(sw.Tile):
         self.m.add(aoi_control)
         self.m.add(order_control)
         self.m.add(color_control)
+        self.m.add(down_control)
 
         # create the tile
         super().__init__("map_tile", "", [self.m])

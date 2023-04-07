@@ -1,16 +1,18 @@
 """this file will be used as a singleton object in the explorer tile."""
 
 import re
-import time
 from datetime import datetime
 
+import requests
+from geopandas import GeoDataFrame
+from sepal_ui import sepalwidgets as sw
+from sepal_ui.aoi import AoiModel
 from sepal_ui.planetapi import PlanetModel
+from sepal_ui.scripts import utils as su
 
 from component import model as cmod
 from component import parameter as cp
 from component.message import cm
-
-planet = "toto"
 
 # create the regex to match the different know planet datasets
 VISUAL = re.compile("^planet_medres_visual_")  # will be removed from the selection
@@ -92,15 +94,20 @@ def get_url(planet_model: PlanetModel, order_model: cmod.OrderModel) -> str:
     return url + color
 
 
-def download_quads(aoi_name, mosaic_name, grid, out):
+def download_quads(
+    aoi_model: AoiModel,
+    planet_model: PlanetModel,
+    order_model: cmod.OrderModel,
+    grid: GeoDataFrame,
+    alert: sw.Alert,
+) -> None:
     """Export each quad to the appropriate folder."""
-    # a bool_variable to trigger a specifi error message when the mosaic cannot be downloaded
-    view_only = False
 
-    out.add_msg(cm.planet.down.start)
+    alert.add_msg(cm.planet.down.start)
 
     # get the mosaic from the mosaic name
-    mosaic = planet.client.get_mosaic_by_name(mosaic_name).get()["mosaics"][0]
+    mosaics = planet_model.get_mosaics()
+    mosaic = next(m for m in mosaics if m["name"] == order_model.mosaic)
 
     # construct the quad list
     quads = []
@@ -110,43 +117,36 @@ def download_quads(aoi_name, mosaic_name, grid, out):
     # download the quads
     # create lists to display information to the user at the end
     skip = down = fail = 0
+    total = len(quads)
+    alert.update_progress(0, cm.planet.down.progress, total=total)
     for i, quad_id in enumerate(quads):
 
         # update the progress in advance
-        out.update_progress(i / len(quads), cm.planet.down.progress)
+        alert.update_progress(i, total=total)
 
         # check file existence
-        res_dir = cp.get_mosaic_dir(aoi_name, mosaic_name)
-        file = res_dir.joinpath(f"{quad_id}.tif")
+        mosaic_str = su.normalize_str(mosaic_name(order_model.mosaic)[1])
+        res_dir = cp.get_mosaic_dir(aoi_model.name, mosaic_str)
+        file = res_dir / f"{quad_id}.tif"
 
         if file.is_file():
-            out.append_msg(cm.planet.down.exist.format(quad_id))
+            alert.add_msg(cm.planet.down.exist.format(quad_id))
             skip += 1
-            time.sleep(0.3)
             continue
 
         # catch error relative of quad existence
         try:
-            quad = planet.client.get_quad_by_id(mosaic, quad_id).get()
+            quad = planet_model.get_quad(mosaic, quad_id)
         except Exception:
-            out.append_msg(cm.planet.down.not_found.format(quad_id))
+            alert.append_msg(cm.planet.down.not_found.format(quad_id))
             fail += 1
-            time.sleep(0.3)
             continue
 
-        out.append_msg(
-            cm.planet.down.done.format(quad_id)
-        )  # write first to make sure the message stays on screen
+        alert.append_msg(cm.planet.down.done.format(quad_id))
 
-        # specific loop (yes it's ugly) to catch people that didn't use a key allowed to download the asked tiles
-        try:
-            planet.client.download_quad(quad).get_body().write(file)
-        except Exception:
-            out.append_msg(cm.planet.down.no_access)
-            fail += 1
-            view_only = True
-            time.sleep(0.3)
-            continue
+        # download to file
+        r = requests.get(quad["_links"]["download"])
+        file.write_bytes(r.content)
 
         down += 1
 
@@ -157,8 +157,6 @@ def download_quads(aoi_name, mosaic_name, grid, out):
     elif fail > 0.5 * len(quads):  # we missed more than 50%
         color = "warning"
 
-    out.add_msg(cm.planet.down.end.format(len(quads), down, skip, fail), color)
-    if view_only:
-        out.append_msg(cm.planet.down.view_only, type_=color)
+    alert.add_msg(cm.planet.down.end.format(len(quads), down, skip, fail), color)
 
     return

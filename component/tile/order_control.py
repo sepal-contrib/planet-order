@@ -25,11 +25,7 @@ class OrderControl(sm.MenuControl):
 
         # create the control
         super().__init__(
-            icon_content="fa-solid fa-folder",
-            card_content=self.view,
-            m=map_,
-            group=1,
-            **kwargs
+            icon_content="fa-solid fa-folder", card_content=self.view, m=map_, **kwargs
         )
 
         self.set_size(None, None, None, None)
