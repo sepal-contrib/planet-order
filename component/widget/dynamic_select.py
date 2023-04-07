@@ -15,7 +15,7 @@ class DynamicSelect(v.Layout):
     def __init__(self):
         """A composite widget to select mosaic by name."""
         self.prev = v.Btn(
-            _metadata={"increm": -1},
+            _metadata={"increm": 1},
             x_small=True,
             class_="ml-2 mr-2",
             color=sc.primary,
@@ -23,7 +23,7 @@ class DynamicSelect(v.Layout):
         )
 
         self.next = v.Btn(
-            _metadata={"increm": 1},
+            _metadata={"increm": -1},
             x_small=True,
             class_="ml-2 mr-2",
             color=sc.primary,

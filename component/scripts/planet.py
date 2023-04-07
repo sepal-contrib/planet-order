@@ -72,13 +72,13 @@ def order_basemaps(mosaics: dict) -> list[dict[str, str]]:
         elif type_ == "OTHER":
             monthly.append({"text": short, "value": m})
 
-    # fill the results with the found mosaics
-    if len(bianual):
-        res += [{"header": "NICFI bianual"}] + bianual
+    # fill the results with the found mosaics in DESC chronological order
     if len(monthly):
-        res += [{"header": "NICFI monthly"}] + monthly
+        res += [{"header": "NICFI monthly"}] + monthly[::-1]
+    if len(bianual):
+        res += [{"header": "NICFI bianual"}] + bianual[::-1]
     if len(other):
-        res += [{"header": "other"}] + other
+        res += [{"header": "other"}] + other[::-1]
 
     return res
 
