@@ -10,7 +10,7 @@ class ColorControl(sm.MenuControl):
 
         self.view = sw.ListItemGroup(
             v_model=cp.planet_colors[0],
-            children=[sw.ListItem(children=[c], value=c) for c in cp.planet_colors[:4]],
+            children=[sw.ListItem(children=[c], value=c) for c in cp.planet_colors],
         )
 
         # create the control
