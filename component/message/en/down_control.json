@@ -1,0 +1,12 @@
+{
+  "down_control": {
+    "title": "Download images",
+    "btn": "Download",
+    "error": {
+      "no_aoi": "Select an aoi first"
+    },
+    "process": {
+      "loading_grid": "Loading the PLANET grid"
+    }
+  }
+}
