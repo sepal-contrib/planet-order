@@ -1,0 +1,5 @@
+name: voici
+channels:
+  - https://repo.mamba.pm/conda-forge
+dependencies:
+  - sepal-ui
