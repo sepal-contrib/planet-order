@@ -1,8 +1,8 @@
 """this file will be used as a singleton object in the explorer tile."""
 
-from typing import Tuple, List, Dict
 import re
 from datetime import datetime
+from typing import Dict, List, Tuple
 
 import requests
 from geopandas import GeoDataFrame
