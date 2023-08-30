@@ -2,6 +2,7 @@
 
 import re
 from datetime import datetime
+from typing import Dict, List, Tuple
 
 import requests
 from geopandas import GeoDataFrame
@@ -25,7 +26,7 @@ ANALYTIC_BIANUAL = re.compile(
 )  # NICFI bianual
 
 
-def mosaic_name(mosaic: str) -> tuple[str, str]:
+def mosaic_name(mosaic: str) -> Tuple[str, str]:
     """Give back the shorten name of the mosaic so that it can be displayed on the thumbnails.
 
     Args:
@@ -54,7 +55,7 @@ def mosaic_name(mosaic: str) -> tuple[str, str]:
     return type_, res
 
 
-def order_basemaps(mosaics: dict) -> list[dict[str, str]]:
+def order_basemaps(mosaics: dict) -> List[Dict[str, str]]:
     """create a list of items for the dynamic selector"""
 
     # get the basemap names
@@ -120,7 +121,6 @@ def download_quads(
     total = len(quads)
     alert.update_progress(0, cm.planet.down.progress, total=total)
     for i, quad_id in enumerate(quads):
-
         # update the progress in advance
         alert.update_progress(i, total=total)
 
