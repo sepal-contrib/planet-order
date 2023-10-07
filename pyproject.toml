@@ -20,3 +20,16 @@ convention = "google"
 
 [tool.ruff.per-file-ignores]
 "*/__init__.py" = ["F403"] # unable to detect undefined names | hide internal strcuture
+
+
+[project]
+version = "0.0.0"
+
+[tool.commitizen]
+version = "0.0.0"
+update_changelog_on_bump = true
+changelog_file = "CHANGELOG.md"
+changelog_incremental = true
+version_files = [
+    "pyproject.toml:version",
+]
