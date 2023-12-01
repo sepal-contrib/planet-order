@@ -10,7 +10,6 @@ from component.message import cm
 
 
 class DownView(sw.Tile):
-
     grid = None
     "the grod associated to the aoi"
 
@@ -20,7 +19,6 @@ class DownView(sw.Tile):
         planet_model: PlanetModel,
         order_model: cmod.OrderModel,
     ):
-
         # save models as members
         self.aoi_model = aoi_model
         self.planet_model = planet_model
@@ -36,9 +34,8 @@ class DownView(sw.Tile):
         self.btn.on_event("click", self.download_quads)
         self.aoi_model.observe(lambda *args: setattr(self, "grid", None), "name")
 
-    @sd.loading_button(debug=True)
+    @sd.loading_button()
     def download_quads(self, *args) -> None:
-
         if not self.aoi_model.name:
             raise Exception(cm.down_control.error.no_aoi)
 
@@ -66,7 +63,6 @@ class DownControl(sm.MenuControl):
         order_model: cmod.OrderModel,
         **kwargs
     ):
-
         self.view = DownView(aoi_model, planet_model, order_model)
 
         # create the control
