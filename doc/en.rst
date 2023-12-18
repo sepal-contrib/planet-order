@@ -1,6 +1,6 @@
 Planet order
 ============
-*Explore and download Planet Lab images with the Planet Order app*
+*Order imagery from Planet Lab mosaics*
 
 This dasboard application, based on the `SEPAL-UI <https://sepal-ui.readthedocs.io/en/latest/>`_ framework, provides users with an interface to explore and download Planet Lab images.
 
