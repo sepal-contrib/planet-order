@@ -7,4 +7,7 @@ git+https://github.com/12rambau/sepal_ui.git@sepal_pre_release
 
 # custom libs
 geopandas
-planet>=2.0a6
+planet<2.7
+
+
+# trigger build

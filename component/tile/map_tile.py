@@ -16,7 +16,7 @@ from .planet_control import PlanetControl
 
 
 class MapTile(sw.Tile):
-    def __init__(self):
+    def __init__(self, test=False):
         """Specific Map integrating all the widget components.
 
         Use this map to gather all your widget and place them on it. It will reduce the amount of work to perform in the notebook
@@ -31,7 +31,7 @@ class MapTile(sw.Tile):
 
         # create the controls
         fullscreen_control = sm.FullScreenControl(
-            self.m, True, True, position="topright"
+            self.m, not test, not test, position="topright"
         )
         aoi_control = AoiControl(self.m, self.aoi_model)
         planet_control = PlanetControl(self.m, self.planet_model)
